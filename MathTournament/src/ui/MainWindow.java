@@ -91,6 +91,7 @@ public class MainWindow extends JFrame
     }
 
     public MainWindow() {
+        System.out.println("Initialize Window");
         init();
     }
 
