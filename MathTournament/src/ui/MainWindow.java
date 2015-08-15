@@ -8,18 +8,15 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -28,6 +25,9 @@ import javax.swing.border.EmptyBorder;
 
 public class MainWindow extends JFrame
 {
+
+    private final int WIDTH = 1100;
+    private final int HEIGHT = 600;
 
     public MainWindow() {
         System.out.println("Initialize Window");
@@ -39,8 +39,11 @@ public class MainWindow extends JFrame
         this.setTitle("Main Tournament Window");
         this.setLayout(new GridBagLayout());
 
-        JButton addStudent = new JButton("Add Student");
-        JButton enterScores = new JButton("Enter Scores");
+        JButton addStudent = new MyButton("Add Student");
+        JButton enterScores = new MyButton("Enter Morning Scores");
+        JButton addColleges = new MyButton("Enter College Names");
+        JButton enterTeamScores = new MyButton("Enter Team Scores");
+        JButton showTopScores = new MyButton("Show Top Scores");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
@@ -55,11 +58,26 @@ public class MainWindow extends JFrame
             }
         });
 
-        this.add(addStudent, setConstraints(0, 0));
-        this.setSize(1100, 600);
+        this.add(addColleges, setConstraints(0, 0));
+        this.add(addStudent, setConstraints(0, 1));
+        this.add(enterScores, setConstraints(0, 2));
+        this.add(enterTeamScores, setConstraints(1, 0));
+        this.add(showTopScores, setConstraints(1, 1));
+        this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(new Color(0, 150, 255));
         this.setVisible(true);
+        this.setLocation(getWindowPoint());
+        this.setResizable(false);
+    }
+
+    public Point getWindowPoint ()
+    {
+        int screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        int screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        int x = (screenWidth >> 1) - (WIDTH >> 1);
+        int y = (screenHeight >> 1) - (HEIGHT >> 1);
+        return new Point(x, y);
     }
 
     public GridBagConstraints setConstraints (int x, int y)
@@ -77,37 +95,18 @@ public class MainWindow extends JFrame
     }
 }
 
-class Student
+class MyButton extends JButton
 {
 
-    private String first;
-    private String last;
-    private int score = 0;
-    private int team;
-    private String college;
-
-    public Student(String f, String l, int t, String c) {
-        first = f;
-        last = l;
-        team = t;
-        college = c;
+    public MyButton(String name) {
+        super(name);
+        setFont(new Font("Consolas", Font.BOLD, 14));
+        setBorder(BorderFactory.createRaisedBevelBorder());
     }
 
-    public String toXML ()
+    public Dimension getPreferredSize ()
     {
-        String s = "<student>\r\n";
-        s += "\t<college>" + college + "</college>\r\n";
-        s += "\t<first>" + first + "</first>\r\n";
-        s += "\t<last>" + last + "</last>\r\n";
-        s += "\t<team>" + team + "</team>\r\n";
-        s += "\t<score>" + score + "</score>\r\n";
-        s += "</student>";
-        return s;
-    }
-
-    public String toString ()
-    {
-        return first + " " + last;
+        return new Dimension(220, 30);
     }
 }
 
@@ -139,22 +138,19 @@ class AddCollegeFrame extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel panel = new JPanel(new GridBagLayout());
-        JLabel collegeLabel = new JLabel("Enter the college name");
-        collegeLabel.setFont(new Font("Consolas", Font.BOLD, 14));
-        JTextField college = new JTextField(50);
-        college.setFont(new Font("Consolas", Font.PLAIN, 16));
-        panel.add(collegeLabel, setConstraints(0, 0));
-        panel.add(college, setConstraints(1, 0));
-        JTable table = new JTable(50, 3);
+        JTable table = new JTable(50, 4);
         table.getColumnModel().getColumn(0).setHeaderValue("First");
         table.getColumnModel().getColumn(1).setHeaderValue("Last");
-        table.getColumnModel().getColumn(2).setHeaderValue("Team");
-        table.getColumnModel().getColumn(0).setMinWidth(250);
-        table.getColumnModel().getColumn(0).setMaxWidth(250);
-        table.getColumnModel().getColumn(1).setMinWidth(250);
-        table.getColumnModel().getColumn(1).setMaxWidth(250);
-        table.getColumnModel().getColumn(2).setMinWidth(67);
-        table.getColumnModel().getColumn(2).setMaxWidth(67);
+        table.getColumnModel().getColumn(2).setHeaderValue("College");
+        table.getColumnModel().getColumn(3).setHeaderValue("Team");
+        table.getColumnModel().getColumn(0).setMinWidth(240);
+        table.getColumnModel().getColumn(0).setMaxWidth(240);
+        table.getColumnModel().getColumn(1).setMinWidth(240);
+        table.getColumnModel().getColumn(1).setMaxWidth(240);
+        table.getColumnModel().getColumn(2).setMinWidth(120);
+        table.getColumnModel().getColumn(2).setMaxWidth(120);
+        table.getColumnModel().getColumn(3).setMinWidth(67);
+        table.getColumnModel().getColumn(3).setMaxWidth(67);
         table.setRowHeight(25);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
         JTextField exampleField = new JTextField();
@@ -165,14 +161,12 @@ class AddCollegeFrame extends JFrame
         JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
             {
-                return new Dimension(600, 400);
+                return new Dimension(700, 400);
             }
         };
         JPanel tablePanel = new JPanel(new FlowLayout());
         scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black, 4),
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 4)));
-        // tablePanel.setBorder(BorderFactory.createLineBorder(Color.black,
-        // 5));
         tablePanel.add(scroll);
         tablePanel.setOpaque(false);
         panel.setOpaque(false);
@@ -189,24 +183,7 @@ class AddCollegeFrame extends JFrame
         save.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent ae)
             {
-                try {
-                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("test.txt"))));
-                    String coll = college.getText();
-                    for (int i = 0; i < 50; i++) {
-                        String first = (String) table.getValueAt(i, 0);
-                        if (first != null) {
-                            String last = (String) table.getValueAt(i, 1);
-                            int team = Integer.parseInt((String) table.getValueAt(i, 2));
-                            Student s = new Student(first, last, team, coll);
-                            pw.println(s.toXML());
-                        }
-                    }
-                    pw.flush();
-                    pw.close();
-                    dispose();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
             }
         });
         buttonPanel.setOpaque(false);
