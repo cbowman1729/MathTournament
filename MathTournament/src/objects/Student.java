@@ -6,6 +6,7 @@ package objects;
  */
 public class Student implements Comparable<Student>
 {
+    private int id;
     private String first;
     private String last;
     private int score;
@@ -13,22 +14,18 @@ public class Student implements Comparable<Student>
     private String college;
 
     /**
-     * Constructor
-     * 
-     * @param f
-     *            first name
-     * @param l
-     *            last name
-     * @param t
-     *            team number
-     * @param c
-     *            college name
+     * @param id
+     * @param first
+     * @param last
+     * @param team
+     * @param college
      */
-    public Student(String f, String l, int t, String c) {
-        first = f;
-        last = l;
-        team = t;
-        college = c;
+    public Student(int id, String first, String last, int team, String college) {
+        this.id = id;
+        this.first = first;
+        this.last = last;
+        this.team = team;
+        this.college = college;
     }
 
     /**
@@ -40,8 +37,7 @@ public class Student implements Comparable<Student>
     }
 
     /**
-     * @param first
-     *            set the student's first name
+     * @param first set the student's first name
      */
     public void setFirst (String first)
     {
@@ -57,8 +53,7 @@ public class Student implements Comparable<Student>
     }
 
     /**
-     * @param last
-     *            set the student's last name
+     * @param last set the student's last name
      */
     public void setLast (String last)
     {
@@ -74,8 +69,7 @@ public class Student implements Comparable<Student>
     }
 
     /**
-     * @param score
-     *            set the student's score
+     * @param score set the student's score
      */
     public void setScore (int score)
     {
@@ -91,8 +85,7 @@ public class Student implements Comparable<Student>
     }
 
     /**
-     * @param team
-     *            set the student's team number
+     * @param team set the student's team number
      */
     public void setTeam (int team)
     {
@@ -108,8 +101,7 @@ public class Student implements Comparable<Student>
     }
 
     /**
-     * @param college
-     *            set the student's college name
+     * @param college set the student's college name
      */
     public void setCollege (String college)
     {
@@ -131,12 +123,9 @@ public class Student implements Comparable<Student>
     @Override
     public int compareTo (Student s)
     {
-        if (score > s.getScore())
-            return 1;
-        else if (score < s.getScore())
-            return -1;
-        else
-            return 0;
+        if (score > s.getScore()) return 1;
+        else if (score < s.getScore()) return -1;
+        else return 0;
     }
 
 }

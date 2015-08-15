@@ -23,11 +23,15 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import data.Tracker;
+import objects.Student;
+
 public class MainWindow extends JFrame
 {
 
     private final int WIDTH = 1100;
     private final int HEIGHT = 600;
+    private Tracker tracker = new Tracker();
 
     public MainWindow() {
         System.out.println("Initialize Window");
@@ -47,14 +51,21 @@ public class MainWindow extends JFrame
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
-                AddCollegeFrame asf = new AddCollegeFrame();
+                AddStudentsFrame asf = new AddStudentsFrame(tracker);
             }
         });
 
         enterScores.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
-                EnterScoresFrame esf = new EnterScoresFrame();
+                EnterScoresFrame esf = new EnterScoresFrame(tracker);
+            }
+        });
+
+        addColleges.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                AddCollegesFrame acf = new AddCollegesFrame(tracker);
             }
         });
 
@@ -110,9 +121,47 @@ class MyButton extends JButton
     }
 }
 
+class AddCollegesFrame extends JFrame
+{
+    public AddCollegesFrame(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("Enter College Names");
+        JTable table = new JTable(20, 2);
+        table.setRowHeight(25);
+        table.getColumnModel().getColumn(0).setHeaderValue("Full Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Abbreviation");
+        table.getColumnModel().getColumn(0).setPreferredWidth(400);
+        table.getColumnModel().getColumn(1).setPreferredWidth(100);
+        JScrollPane scrollTable = new JScrollPane(table);
+        scrollTable.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 4),
+                BorderFactory.createLineBorder(Color.GRAY, 4)));
+        JPanel tablePanel = new JPanel(new FlowLayout());
+        tablePanel.add(scrollTable);
+        tablePanel.setOpaque(false);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton save = new MyButton("Save") {
+            public Dimension getPreferredSize ()
+            {
+                return new Dimension(100, 25);
+            }
+        };
+        buttonPanel.add(save);
+        buttonPanel.setOpaque(false);
+        this.setLayout(new BorderLayout());
+        this.add(tablePanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+        this.setLocation(500, 200);
+        this.setSize(900, 600);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+    }
+}
+
 class EnterScoresFrame extends JFrame
 {
-    public EnterScoresFrame() {
+    public EnterScoresFrame(Tracker tracker) {
         this.getContentPane().setBackground(new Color(0, 150, 255));
         this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
         this.getRootPane().setBackground(new Color(0, 150, 255));
@@ -125,9 +174,9 @@ class EnterScoresFrame extends JFrame
     }
 }
 
-class AddCollegeFrame extends JFrame
+class AddStudentsFrame extends JFrame
 {
-    public AddCollegeFrame() {
+    public AddStudentsFrame(Tracker tracker) {
         this.getContentPane().setBackground(new Color(0, 150, 255));
         this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
         this.getRootPane().setBackground(new Color(0, 150, 255));
@@ -138,7 +187,7 @@ class AddCollegeFrame extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel panel = new JPanel(new GridBagLayout());
-        JTable table = new JTable(50, 4);
+        JTable table = new JTable(300, 4);
         table.getColumnModel().getColumn(0).setHeaderValue("First");
         table.getColumnModel().getColumn(1).setHeaderValue("Last");
         table.getColumnModel().getColumn(2).setHeaderValue("College");
@@ -173,7 +222,7 @@ class AddCollegeFrame extends JFrame
         this.add(tablePanel, BorderLayout.CENTER);
         this.add(panel, BorderLayout.NORTH);
         JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton save = new JButton("save") {
+        JButton save = new MyButton("save") {
             public Dimension getPreferredSize ()
             {
                 return new Dimension(100, 25);
@@ -183,7 +232,19 @@ class AddCollegeFrame extends JFrame
         save.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent ae)
             {
+                boolean done = false;
+                int r = 0;
+                while (!done) {
+                    int id = r;
+                    String first = (String) table.getValueAt(r, 0);
+                    if (first != null) {
+                        String last = (String) table.getValueAt(r, 1);
+                        String coll = (String) table.getValueAt(r, 2);
+                        int team = Integer.parseInt((String) table.getValueAt(r, 3));
+                        Student s = new Student(id, first, last, team, coll);
 
+                    }
+                }
             }
         });
         buttonPanel.setOpaque(false);
