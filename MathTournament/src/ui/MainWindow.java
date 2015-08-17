@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -180,26 +181,44 @@ class AddStudentsFrame extends JFrame
         this.getContentPane().setBackground(new Color(0, 150, 255));
         this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
         this.getRootPane().setBackground(new Color(0, 150, 255));
-        this.setTitle("Add College Information");
+        this.setTitle("Add Students");
         this.setLayout(new BorderLayout());
         this.setLocation(500, 200);
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel panel = new JPanel(new GridBagLayout());
-        JTable table = new JTable(300, 4);
+        JLabel nameLabel = new JLabel("Enter College Name");
+        JTextField nameField = new JTextField(150) {
+            public Dimension getPreferredSize ()
+            {
+                return new Dimension(150, 20);
+            }
+        };
+        panel.add(nameLabel, setConstraints(0, 0));
+        panel.add(nameField, setConstraints(1, 0));
+        JLabel abbrLabel = new JLabel("Enter College Abbreviation");
+        JTextField abbrField = new JTextField(150) {
+            public Dimension getPreferredSize ()
+            {
+                return new Dimension(150, 20);
+            }
+        };
+        panel.add(abbrLabel, setConstraints(0, 1));
+        panel.add(abbrField, setConstraints(1, 1));
+        JTable table = new JTable(300, 3);
         table.getColumnModel().getColumn(0).setHeaderValue("First");
         table.getColumnModel().getColumn(1).setHeaderValue("Last");
-        table.getColumnModel().getColumn(2).setHeaderValue("College");
-        table.getColumnModel().getColumn(3).setHeaderValue("Team");
+        // table.getColumnModel().getColumn(2).setHeaderValue("College");
+        table.getColumnModel().getColumn(2).setHeaderValue("Team");
         table.getColumnModel().getColumn(0).setMinWidth(240);
         table.getColumnModel().getColumn(0).setMaxWidth(240);
         table.getColumnModel().getColumn(1).setMinWidth(240);
         table.getColumnModel().getColumn(1).setMaxWidth(240);
-        table.getColumnModel().getColumn(2).setMinWidth(120);
-        table.getColumnModel().getColumn(2).setMaxWidth(120);
-        table.getColumnModel().getColumn(3).setMinWidth(67);
-        table.getColumnModel().getColumn(3).setMaxWidth(67);
+        // table.getColumnModel().getColumn(2).setMinWidth(120);
+        // table.getColumnModel().getColumn(2).setMaxWidth(120);
+        table.getColumnModel().getColumn(2).setMinWidth(67);
+        table.getColumnModel().getColumn(2).setMaxWidth(67);
         table.setRowHeight(25);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
         JTextField exampleField = new JTextField();
@@ -210,7 +229,7 @@ class AddStudentsFrame extends JFrame
         JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
             {
-                return new Dimension(700, 400);
+                return new Dimension(580, 400);
             }
         };
         JPanel tablePanel = new JPanel(new FlowLayout());
@@ -239,9 +258,9 @@ class AddStudentsFrame extends JFrame
                     String first = (String) table.getValueAt(r, 0);
                     if (first != null) {
                         String last = (String) table.getValueAt(r, 1);
-                        String coll = (String) table.getValueAt(r, 2);
-                        int team = Integer.parseInt((String) table.getValueAt(r, 3));
-                        Student s = new Student(id, first, last, team, coll);
+                        // String coll = (String) table.getValueAt(r, 2);
+                        int team = Integer.parseInt((String) table.getValueAt(r, 2));
+                        Student s = new Student(id, first, last, team);
 
                     }
                 }

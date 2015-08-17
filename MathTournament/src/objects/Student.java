@@ -11,7 +11,7 @@ public class Student implements Comparable<Student>
     private String last;
     private int score;
     private int team;
-    private String college;
+    // private String college;
 
     /**
      * @param id
@@ -20,12 +20,11 @@ public class Student implements Comparable<Student>
      * @param team
      * @param college
      */
-    public Student(int id, String first, String last, int team, String college) {
+    public Student(int id, String first, String last, int team) {
         this.id = id;
         this.first = first;
         this.last = last;
         this.team = team;
-        this.college = college;
     }
 
     /**
@@ -94,20 +93,15 @@ public class Student implements Comparable<Student>
 
     /**
      * @return return student's college name
-     */
-    public String getCollege ()
-    {
-        return college;
-    }
-
-    /**
+     * 
+     *         public String getCollege () { return college; }
+     * 
+     *         /**
      * @param college set the student's college name
+     * 
+     *            public void setCollege (String college) { this.college =
+     *            college; }
      */
-    public void setCollege (String college)
-    {
-        this.college = college;
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -116,8 +110,7 @@ public class Student implements Comparable<Student>
     @Override
     public String toString ()
     {
-        return "Student [first=" + first + ", last=" + last + ", score=" + score + ", team=" + team + ", college="
-                + college + "]";
+        return "Student [first=" + first + ", last=" + last + ", score=" + score + ", team=" + team + "]";
     }
 
     @Override

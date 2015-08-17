@@ -1,0 +1,7 @@
+<student>
+	<college>UNG</college>
+	<first>Casey</first>
+	<last>Bowman</last>
+	<team>1</team>
+	<score>0</score>
+</student>
