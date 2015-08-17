@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 public class Team implements Comparable<Team>
 {
-    private int id;
-    ArrayList<Student> students;
+    ArrayList<Student> students = new ArrayList <Student> ();
     String college;
     int score;
     int number;
@@ -15,11 +14,8 @@ public class Team implements Comparable<Team>
      * @param score score for the team
      * @param number the team number
      */
-    public Team(int id, ArrayList<Student> students, String college, int score, int number) {
-        this.id = id;
-        this.students = students;
+    public Team(String college, int number) {
         this.college = college;
-        this.score = score;
         this.number = number;
     }
 
@@ -81,6 +77,10 @@ public class Team implements Comparable<Team>
         this.number = number;
     }
 
+    public void addStudent (Student s) {
+    	students.add(s);
+    }
+    
     /*
      * (non-Javadoc)
      * 

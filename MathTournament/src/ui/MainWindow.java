@@ -22,9 +22,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import data.Tracker;
+import objects.College;
 import objects.Student;
 
 public class MainWindow extends JFrame
@@ -49,6 +51,7 @@ public class MainWindow extends JFrame
         JButton addColleges = new MyButton("Enter College Names");
         JButton enterTeamScores = new MyButton("Enter Team Scores");
         JButton showTopScores = new MyButton("Show Top Scores");
+        JButton saveStudents = new MyButton("Save Students to File");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
@@ -69,10 +72,15 @@ public class MainWindow extends JFrame
                 AddCollegesFrame acf = new AddCollegesFrame(tracker);
             }
         });
-
+        saveStudents.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		tracker.saveCollegesAndStudents ();
+        	}
+        });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
-        this.add(enterScores, setConstraints(0, 2));
+        this.add(saveStudents, setConstraints(0, 2));
+        this.add(enterScores, setConstraints(0, 3));
         this.add(enterTeamScores, setConstraints(1, 0));
         this.add(showTopScores, setConstraints(1, 1));
         this.setSize(WIDTH, HEIGHT);
@@ -188,25 +196,33 @@ class AddStudentsFrame extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel panel = new JPanel(new GridBagLayout());
-        JLabel nameLabel = new JLabel("Enter College Name");
-        JTextField nameField = new JTextField(150) {
+        JLabel nameLabel = new JLabel("Enter College Name:");
+        nameLabel.setFont(new Font ("Consolas", Font.BOLD, 14));
+        nameLabel.setForeground(Color.WHITE);                
+        JTextField nameField = new JTextField(250) {
             public Dimension getPreferredSize ()
             {
-                return new Dimension(150, 20);
+                return new Dimension(250, 20);
             }
         };
-        panel.add(nameLabel, setConstraints(0, 0));
+        GridBagConstraints gbc = setConstraints (0,0);
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(nameLabel, gbc);
         panel.add(nameField, setConstraints(1, 0));
-        JLabel abbrLabel = new JLabel("Enter College Abbreviation");
-        JTextField abbrField = new JTextField(150) {
+        JLabel abbrLabel = new JLabel("Enter College Abbreviation:");
+        abbrLabel.setFont(new Font ("Consolas", Font.BOLD, 14));
+        abbrLabel.setForeground(Color.WHITE);
+        JTextField abbrField = new JTextField(250) {
             public Dimension getPreferredSize ()
             {
-                return new Dimension(150, 20);
+                return new Dimension(250, 20);
             }
         };
-        panel.add(abbrLabel, setConstraints(0, 1));
+        gbc = setConstraints (0,1);
+        gbc.anchor = GridBagConstraints.EAST;
+        panel.add(abbrLabel, gbc);
         panel.add(abbrField, setConstraints(1, 1));
-        JTable table = new JTable(300, 3);
+        JTable table = new JTable(80, 3);
         table.getColumnModel().getColumn(0).setHeaderValue("First");
         table.getColumnModel().getColumn(1).setHeaderValue("Last");
         // table.getColumnModel().getColumn(2).setHeaderValue("College");
@@ -250,20 +266,24 @@ class AddStudentsFrame extends JFrame
         buttonPanel.add(save);
         save.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent ae)
-            {
-                boolean done = false;
-                int r = 0;
-                while (!done) {
-                    int id = r;
-                    String first = (String) table.getValueAt(r, 0);
+            {                
+            	String collName = nameField.getText();
+            	String collAbbr = abbrField.getText();
+            	College c = new College (collName, collAbbr);
+                for (int i = 0; i < 80; i++) {
+                    int id = i;                    
+                    String first = (String) table.getValueAt(i, 0);
                     if (first != null) {
-                        String last = (String) table.getValueAt(r, 1);
-                        // String coll = (String) table.getValueAt(r, 2);
-                        int team = Integer.parseInt((String) table.getValueAt(r, 2));
+                        String last = (String) table.getValueAt(i, 1);
+                        int team = Integer.parseInt((String) table.getValueAt(i, 2));
                         Student s = new Student(id, first, last, team);
-
+                        c.addStudent(s);
                     }
+                    else break;
                 }
+                tracker.addCollege(c);
+                // tracker.printColleges();
+                dispose ();
             }
         });
         buttonPanel.setOpaque(false);

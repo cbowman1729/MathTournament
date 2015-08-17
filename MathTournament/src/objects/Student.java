@@ -1,10 +1,12 @@
 package objects;
 
+import java.io.Serializable;
+
 /**
  * @author Casey Bowman
  *
  */
-public class Student implements Comparable<Student>
+public class Student implements Comparable<Student>, Serializable
 {
     private int id;
     private String first;

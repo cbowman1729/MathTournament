@@ -1,5 +1,7 @@
 package data;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -70,4 +72,41 @@ public class Tracker
         s += t3.getCollege() + " " + t3.getNumber() + "\n";
         return s;
     }
+    
+    public void printColleges () {
+    	for (College c : colleges) System.out.println (c);
+    }
+    
+    public void saveCollegesAndStudents () {
+    	popStuds ();
+    	try {
+    		FileOutputStream fos = new FileOutputStream ("colleges.ser");
+    		ObjectOutputStream oos = new ObjectOutputStream (fos);
+    		for (College c : colleges) {
+    			oos.writeObject(c);
+    		}
+    		oos.close();
+    		fos.close();
+    		fos = new FileOutputStream ("students.ser");
+    		oos = new ObjectOutputStream (fos);
+    		for (Student s : students) {
+    			oos.writeObject(s);
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

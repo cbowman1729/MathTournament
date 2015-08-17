@@ -9,11 +9,10 @@ import java.util.Collections;
  */
 public class College implements Comparable<College>
 {
-    private int id;
     String name;
     String abbr;
-    ArrayList<Student> students;
-    ArrayList<Team> teams;
+    ArrayList<Student> students = new ArrayList <Student> ();
+    ArrayList<Team> teams = new ArrayList <Team> ();
     double score;
 
     /**
@@ -21,8 +20,7 @@ public class College implements Comparable<College>
      * @param students
      * @param teams
      */
-    public College(int id, String name, String abbr) {
-        this.id = id;
+    public College(String name, String abbr) {
         this.name = name;
         this.abbr = abbr;
     }
@@ -89,6 +87,10 @@ public class College implements Comparable<College>
     public void setScore (double score)
     {
         this.score = score;
+    }
+    
+    public void addStudent (Student s) {
+    	students.add(s);
     }
 
     public void determineScore ()
