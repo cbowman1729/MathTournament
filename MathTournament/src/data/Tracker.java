@@ -14,6 +14,7 @@ public class Tracker
     private ArrayList<College> colleges = new ArrayList<College>();
     private ArrayList<Student> students = new ArrayList<Student>();
     private ArrayList<Team> teams = new ArrayList<Team>();
+    private int temp = 1;
 
     public void addCollege (College c)
     {
