@@ -1,5 +1,6 @@
 package objects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -7,7 +8,7 @@ import java.util.Collections;
  * @author Casey Bowman
  *
  */
-public class College implements Comparable<College>
+public class College implements Comparable<College>, Serializable
 {
     String name;
     String abbr;

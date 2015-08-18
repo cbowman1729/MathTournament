@@ -12,6 +12,9 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -43,6 +46,11 @@ public class MainWindow extends JFrame
 
     public void init ()
     {
+    	File fcoll = new File ("colleges.ser");
+    	File fstud = new File ("students.ser");
+    	if (fcoll.exists() && fstud.exists()) {
+    		tracker.importData ();
+    	}
         this.setTitle("Main Tournament Window");
         this.setLayout(new GridBagLayout());
 
@@ -180,6 +188,43 @@ class EnterScoresFrame extends JFrame
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
+        tracker.printColleges();
+        ArrayList <College> coll = tracker.getColleges();
+        ArrayList <Student> stud = new ArrayList <Student> ();
+        for (College c : coll) {
+        	stud.addAll(c.getStudents());
+        }
+        for (Student s : stud) System.out.println (s);
+        System.out.println ();
+        Collections.sort(stud);
+        for (Student s : stud) System.out.println (s);
+        JPanel scrollPanel = new JPanel (new FlowLayout());
+        int rownum = (stud.size() > 0) ? stud.size() : 5;
+        JTable table = new JTable (rownum, 2);
+        table.getColumnModel().getColumn(0).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Score");
+        table.getColumnModel().getColumn(0).setMinWidth(400);
+        table.getColumnModel().getColumn(0).setMaxWidth(400);
+        table.getColumnModel().getColumn(1).setMinWidth(100);
+        table.getColumnModel().getColumn(1).setMaxWidth(100);
+        table.setRowHeight(25);
+        table.setFont(new Font("Consolas", Font.PLAIN, 16));
+        JTextField exampleField = new JTextField();
+        exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        DefaultCellEditor dce = new DefaultCellEditor(exampleField);
+        table.getColumnModel().getColumn(0).setCellEditor(dce);
+        table.getColumnModel().getColumn(1).setCellEditor(dce);
+        JScrollPane scroll = new JScrollPane (table) {
+            public Dimension getPreferredSize ()
+            {
+            	int h = 25 * (rownum + 1) - 3;
+                return new Dimension(518, (h > 400) ? 400 : h);
+            }
+        };
+//        scroll.setOpaque(false);
+        scrollPanel.add(scroll);
+        scrollPanel.setOpaque(false);
+        this.add(scrollPanel, BorderLayout.CENTER);
     }
 }
 
@@ -242,6 +287,7 @@ class AddStudentsFrame extends JFrame
         DefaultCellEditor dce = new DefaultCellEditor(exampleField);
         table.getColumnModel().getColumn(0).setCellEditor(dce);
         table.getColumnModel().getColumn(1).setCellEditor(dce);
+        table.getColumnModel().getColumn(2).setCellEditor(dce);
         JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
             {

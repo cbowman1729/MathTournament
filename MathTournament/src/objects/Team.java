@@ -1,8 +1,9 @@
 package objects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Team implements Comparable<Team>
+public class Team implements Comparable<Team>, Serializable
 {
     ArrayList<Student> students = new ArrayList <Student> ();
     String college;
