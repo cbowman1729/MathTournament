@@ -93,6 +93,10 @@ public class College implements Comparable<College>, Serializable
     public void addStudent (Student s) {
     	students.add(s);
     }
+    
+    public void addTeam (Team t) {
+    	teams.add(t);
+    }
 
     public void determineScore ()
     {

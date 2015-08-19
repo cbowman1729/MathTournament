@@ -90,7 +90,7 @@ public class Team implements Comparable<Team>, Serializable
     @Override
     public String toString ()
     {
-        return "Team [students=" + students + ", score=" + score + ", number=" + number + "]";
+        return "Team [college=" + college + ", students=" + students + ", score=" + score + ", number=" + number + "]";
     }
 
     @Override

@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import data.Tracker;
 import objects.College;
 import objects.Student;
+import objects.Team;
 
 public class MainWindow extends JFrame
 {
@@ -58,6 +59,7 @@ public class MainWindow extends JFrame
         JButton enterTeamScores = new MyButton("Enter Team Scores");
         JButton showTopScores = new MyButton("Show Top Scores");
         JButton saveStudents = new MyButton("Save Students to File");
+        JButton verifyScores = new MyButton("Verify Morning Scores");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
@@ -84,12 +86,19 @@ public class MainWindow extends JFrame
                 tracker.saveCollegesAndStudents();
             }
         });
+        verifyScores.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		VerifyScoresFrame vsf = new VerifyScoresFrame (tracker);
+        	}
+        });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
         this.add(saveStudents, setConstraints(0, 2));
         this.add(enterScores, setConstraints(0, 3));
-        this.add(enterTeamScores, setConstraints(1, 0));
-        this.add(showTopScores, setConstraints(1, 1));
+        this.add(verifyScores, setConstraints (1, 0));
+        this.add(enterTeamScores, setConstraints(1, 1));
+        this.add(showTopScores, setConstraints(1, 2));
+        
         this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(new Color(0, 150, 255));
@@ -262,7 +271,68 @@ class VerifyScoresFrame extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel tablePanel = new JPanel(new FlowLayout());
+        ArrayList <Student> stud = tracker.getStudents();        
+        JTable table = new JTable (stud.size() + 1, 2);
+        int rownum = (stud.size() > 0) ? stud.size () : 5;
+        for (int i = 0; i < stud.size (); i++) {
+        	Student s = stud.get(i);
+        	String name = s.getLast() + ", " + s.getFirst();
+        	int score = s.getScore();
+        	table.setValueAt(name, i, 0);
+        	table.setValueAt(score, i, 1);
+        }
+        table.getColumnModel().getColumn(0).setHeaderValue("Name");
+        table.getColumnModel().getColumn(1).setHeaderValue("Score");
+        table.getColumnModel().getColumn(0).setMinWidth(400);
+        table.getColumnModel().getColumn(0).setMaxWidth(400);
+        table.getColumnModel().getColumn(1).setMinWidth(100);
+        table.getColumnModel().getColumn(1).setMaxWidth(100);
+        table.setRowHeight(25);
+        table.setFont(new Font("Consolas", Font.PLAIN, 16));
+        JTextField exampleField = new JTextField();
+        exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        DefaultCellEditor dce = new DefaultCellEditor(exampleField);
+        table.getColumnModel().getColumn(0).setCellEditor(dce);
+        table.getColumnModel().getColumn(1).setCellEditor(dce);
+        int rowmargin = table.getRowMargin();
+        JScrollPane scroll = new JScrollPane(table) {
+            public Dimension getPreferredSize ()
+            {
+                int h = (25 + rowmargin) * (stud.size() + 1);
+                return new Dimension(518, (h > 400) ? 400 : h);
+            }
+        };
+        scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 3),
+                BorderFactory.createLineBorder(Color.GRAY, 3)));
+        tablePanel.add(scroll);
+        tablePanel.setOpaque(false);
+        this.add(tablePanel, BorderLayout.CENTER);
+        JButton close = new MyButton ("Close Window");
+        JPanel buttonPanel = new JPanel (new FlowLayout ());
+        buttonPanel.setOpaque(false);
+        buttonPanel.add(close);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+        close.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		dispose ();
+        	}
+        });
     }
+}
+
+class EnterTeamScores extends JFrame 
+{
+	public EnterTeamScores (Tracker tracker) {
+		this.getContentPane().setBackground(new Color(0, 150, 255));
+		this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+		this.getRootPane().setBackground(new Color(0, 150, 255));
+		this.setTitle("Add Students");
+		this.setLayout(new BorderLayout());
+		this.setLocation(500, 200);
+		this.setSize(900, 600);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setVisible(true);
+	}
 }
 
 class AddStudentsFrame extends JFrame
@@ -353,18 +423,32 @@ class AddStudentsFrame extends JFrame
                 String collName = nameField.getText();
                 String collAbbr = abbrField.getText();
                 College c = new College(collName, collAbbr);
+                int team = 0;
+                ArrayList <Team> teams = new ArrayList <Team> ();
                 for (int i = 0; i < 80; i++) {
                     int id = i;
                     String first = (String) table.getValueAt(i, 0);
                     if (first != null) {
                         String last = (String) table.getValueAt(i, 1);
-                        int team = Integer.parseInt((String) table.getValueAt(i, 2));
-                        Student s = new Student(id, first, last, team);
+                        int nextteam = Integer.parseInt((String) table.getValueAt(i, 2));
+                        Student s = new Student(id, first, last, nextteam);
+                        if (nextteam != team) {
+                        	team = nextteam;
+                        	Team t = new Team (collAbbr, team);
+                        	t.addStudent(s);
+                        	teams.add(t);
+                        }
+                        else {
+                        	Team t = teams.get(team - 1);
+                        	t.addStudent(s);
+                        }
                         c.addStudent(s);
+                        c.addTeam(teams.get(team -1));                        
                     } else break;
                 }
+                //System.out.println (teams);
                 tracker.addCollege(c);
-                // tracker.printColleges();
+                tracker.printColleges();
                 dispose();
             }
         });
