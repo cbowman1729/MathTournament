@@ -1,7 +1,5 @@
 package data;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -19,10 +17,11 @@ public class Tracker
     private ArrayList<Student> students = new ArrayList<Student>();
     private ArrayList<Team> teams = new ArrayList<Team>();
 
-    public ArrayList <College> getColleges () {
-    	return colleges;
+    public ArrayList<College> getColleges ()
+    {
+        return colleges;
     }
-    
+
     public void addCollege (College c)
     {
         colleges.add(c);
@@ -80,74 +79,72 @@ public class Tracker
         s += t3.getCollege() + " " + t3.getNumber() + "\n";
         return s;
     }
-    
-    public void printColleges () {
-    	for (College c : colleges) System.out.println (c);
+
+    public void printColleges ()
+    {
+        for (College c : colleges)
+            System.out.println(c);
     }
-    
-    public void printStudents () {
-    	for (Student s : students) System.out.println (s);
+
+    public void printStudents ()
+    {
+        for (Student s : students)
+            System.out.println(s);
     }
-    
-    public void saveCollegesAndStudents () {
-    	popStuds ();
-    	try {
-    		FileOutputStream fos = new FileOutputStream ("colleges.ser");
-    		ObjectOutputStream oos = new ObjectOutputStream (fos);
-    		oos.writeInt(colleges.size());
-    		for (College c : colleges) {
-    			oos.writeObject(c);
-    		}
-    		fos.close();
-    		oos.close();
-    		fos = new FileOutputStream ("students.ser");
-    		oos = new ObjectOutputStream (fos);
-    		oos.writeInt(students.size());
-    		for (Student s : students) {
-    			oos.writeObject(s);
-    		}
-    		oos.close();
-    		fos.close();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
+
+    public void setStudents (ArrayList<Student> students)
+    {
+        this.students = students;
     }
-    
-    public void importData () {
-    	try {
-    		FileInputStream fis = new FileInputStream ("colleges.ser");
-    		ObjectInputStream ois = new ObjectInputStream (fis);
-    		int collsize = ois.readInt();    		
-    		for (int i = 0; i < collsize; i++) {
-    			College c = (College)ois.readObject();
-    			colleges.add(c);
-    		}
-    		ois.close();
-    		fis.close();
-    		fis = new FileInputStream ("students.ser");
-    		ois = new ObjectInputStream (fis);
-    		int studsize = ois.readInt();
-    		for (int i = 0; i < studsize; i++) {
-    			Student s = (Student) ois.readObject();
-    			students.add (s);
-    		}
-    		ois.close();
-    		fis.close();
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}    	
+
+    public void saveCollegesAndStudents ()
+    {
+        popStuds();
+        try {
+            FileOutputStream fos = new FileOutputStream("colleges.ser");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeInt(colleges.size());
+            for (College c : colleges) {
+                oos.writeObject(c);
+            }
+            fos.close();
+            oos.close();
+            fos = new FileOutputStream("students.ser");
+            oos = new ObjectOutputStream(fos);
+            oos.writeInt(students.size());
+            for (Student s : students) {
+                oos.writeObject(s);
+            }
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void importData ()
+    {
+        try {
+            FileInputStream fis = new FileInputStream("colleges.ser");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            int collsize = ois.readInt();
+            for (int i = 0; i < collsize; i++) {
+                College c = (College) ois.readObject();
+                colleges.add(c);
+            }
+            ois.close();
+            fis.close();
+            fis = new FileInputStream("students.ser");
+            ois = new ObjectInputStream(fis);
+            int studsize = ois.readInt();
+            for (int i = 0; i < studsize; i++) {
+                Student s = (Student) ois.readObject();
+                students.add(s);
+            }
+            ois.close();
+            fis.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

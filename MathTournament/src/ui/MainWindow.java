@@ -14,7 +14,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -25,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import data.Tracker;
@@ -46,11 +44,11 @@ public class MainWindow extends JFrame
 
     public void init ()
     {
-    	File fcoll = new File ("colleges.ser");
-    	File fstud = new File ("students.ser");
-    	if (fcoll.exists() && fstud.exists()) {
-    		tracker.importData ();
-    	}
+        File fcoll = new File("colleges.ser");
+        File fstud = new File("students.ser");
+        if (fcoll.exists() && fstud.exists()) {
+            tracker.importData();
+        }
         this.setTitle("Main Tournament Window");
         this.setLayout(new GridBagLayout());
 
@@ -80,10 +78,11 @@ public class MainWindow extends JFrame
                 AddCollegesFrame acf = new AddCollegesFrame(tracker);
             }
         });
-        saveStudents.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		tracker.saveCollegesAndStudents ();
-        	}
+        saveStudents.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                tracker.saveCollegesAndStudents();
+            }
         });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
@@ -188,19 +187,19 @@ class EnterScoresFrame extends JFrame
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
-        tracker.printColleges();
-        ArrayList <College> coll = tracker.getColleges();
-        ArrayList <Student> stud = new ArrayList <Student> ();
+        ArrayList<College> coll = tracker.getColleges();
+        ArrayList<Student> stud = new ArrayList<Student>();
         for (College c : coll) {
-        	stud.addAll(c.getStudents());
+            stud.addAll(c.getStudents());
         }
-        for (Student s : stud) System.out.println (s);
-        System.out.println ();
-        Collections.sort(stud);
-        for (Student s : stud) System.out.println (s);
-        JPanel scrollPanel = new JPanel (new FlowLayout());
+        JPanel scrollPanel = new JPanel(new FlowLayout());
         int rownum = (stud.size() > 0) ? stud.size() : 5;
-        JTable table = new JTable (rownum, 2);
+        JTable table = new JTable(rownum, 2);
+        for (int i = 0; i < stud.size(); i++) {
+            Student s = stud.get(i);
+            String name = s.getLast() + ", " + s.getFirst();
+            table.setValueAt(name, i, 0);
+        }
         table.getColumnModel().getColumn(0).setHeaderValue("Name");
         table.getColumnModel().getColumn(1).setHeaderValue("Score");
         table.getColumnModel().getColumn(0).setMinWidth(400);
@@ -214,17 +213,55 @@ class EnterScoresFrame extends JFrame
         DefaultCellEditor dce = new DefaultCellEditor(exampleField);
         table.getColumnModel().getColumn(0).setCellEditor(dce);
         table.getColumnModel().getColumn(1).setCellEditor(dce);
-        JScrollPane scroll = new JScrollPane (table) {
+        int rowmargin = table.getRowMargin();
+        JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
             {
-            	int h = 25 * (rownum + 1) - 3;
+                int h = (25 + rowmargin) * (rownum + 1);
                 return new Dimension(518, (h > 400) ? 400 : h);
             }
         };
-//        scroll.setOpaque(false);
+        scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 3),
+                BorderFactory.createLineBorder(Color.GRAY, 3)));
         scrollPanel.add(scroll);
         scrollPanel.setOpaque(false);
         this.add(scrollPanel, BorderLayout.CENTER);
+        JButton save = new MyButton("Save");
+        save.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                for (int i = 0; i < stud.size(); i++) {
+                    Student s = stud.get(i);
+                    int score = Integer.parseInt((String) table.getValueAt(i, 1));
+                    s.setScore(score);
+                }
+                tracker.setStudents(stud);
+                tracker.printColleges();
+                System.out.println();
+                tracker.printStudents();
+                dispose();
+            }
+        });
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(save);
+        buttonPanel.setOpaque(false);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+    }
+}
+
+class VerifyScoresFrame extends JFrame
+{
+    public VerifyScoresFrame(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("Score Verification");
+        this.setLayout(new BorderLayout());
+        this.setLocation(500, 200);
+        this.setSize(900, 600);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+        JPanel tablePanel = new JPanel(new FlowLayout());
     }
 }
 
@@ -242,20 +279,20 @@ class AddStudentsFrame extends JFrame
         this.setVisible(true);
         JPanel panel = new JPanel(new GridBagLayout());
         JLabel nameLabel = new JLabel("Enter College Name:");
-        nameLabel.setFont(new Font ("Consolas", Font.BOLD, 14));
-        nameLabel.setForeground(Color.WHITE);                
+        nameLabel.setFont(new Font("Consolas", Font.BOLD, 14));
+        nameLabel.setForeground(Color.WHITE);
         JTextField nameField = new JTextField(250) {
             public Dimension getPreferredSize ()
             {
                 return new Dimension(250, 20);
             }
         };
-        GridBagConstraints gbc = setConstraints (0,0);
+        GridBagConstraints gbc = setConstraints(0, 0);
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(nameLabel, gbc);
         panel.add(nameField, setConstraints(1, 0));
         JLabel abbrLabel = new JLabel("Enter College Abbreviation:");
-        abbrLabel.setFont(new Font ("Consolas", Font.BOLD, 14));
+        abbrLabel.setFont(new Font("Consolas", Font.BOLD, 14));
         abbrLabel.setForeground(Color.WHITE);
         JTextField abbrField = new JTextField(250) {
             public Dimension getPreferredSize ()
@@ -263,7 +300,7 @@ class AddStudentsFrame extends JFrame
                 return new Dimension(250, 20);
             }
         };
-        gbc = setConstraints (0,1);
+        gbc = setConstraints(0, 1);
         gbc.anchor = GridBagConstraints.EAST;
         panel.add(abbrLabel, gbc);
         panel.add(abbrField, setConstraints(1, 1));
@@ -312,24 +349,23 @@ class AddStudentsFrame extends JFrame
         buttonPanel.add(save);
         save.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent ae)
-            {                
-            	String collName = nameField.getText();
-            	String collAbbr = abbrField.getText();
-            	College c = new College (collName, collAbbr);
+            {
+                String collName = nameField.getText();
+                String collAbbr = abbrField.getText();
+                College c = new College(collName, collAbbr);
                 for (int i = 0; i < 80; i++) {
-                    int id = i;                    
+                    int id = i;
                     String first = (String) table.getValueAt(i, 0);
                     if (first != null) {
                         String last = (String) table.getValueAt(i, 1);
                         int team = Integer.parseInt((String) table.getValueAt(i, 2));
                         Student s = new Student(id, first, last, team);
                         c.addStudent(s);
-                    }
-                    else break;
+                    } else break;
                 }
                 tracker.addCollege(c);
                 // tracker.printColleges();
-                dispose ();
+                dispose();
             }
         });
         buttonPanel.setOpaque(false);
