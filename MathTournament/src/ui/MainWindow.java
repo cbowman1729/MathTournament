@@ -12,8 +12,12 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -347,7 +351,8 @@ class EnterTeamScores extends JFrame
         this.setSize(900, 500);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
-        ArrayList teams = tracker.getTeams();
+        if (tracker.getTeams().size() == 0) tracker.popTeams();
+        ArrayList <Team> teams = tracker.getTeams();
         int rownum = (teams.size() > 0) ? teams.size() : 5;
         JTable table = new JTable(rownum, 12);
 
@@ -371,6 +376,10 @@ class EnterTeamScores extends JFrame
             }
             tc.setCellEditor(dce);
         }
+        for (int i = 0; i < rownum; i++) {
+        	Team t = teams.get(i);
+        	table.setValueAt(t.getCollege() + "-" + t.getNumber(), i, 0);
+        }
         int colmarg = table.getColumnModel().getColumnMargin();
         int rowmarg = table.getRowMargin();
         table.setRowHeight(25);
@@ -393,36 +402,62 @@ class EnterTeamScores extends JFrame
         report.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
+//            	ArrayList <Team> teams = tracker.getTeams();
                 try {
-                    PDDocument document = new PDDocument();
-                    PDPage page = new PDPage();
-                    document.addPage(page);
-
-                    // Create a new font object selecting one of the PDF base
-                    // fonts
-                    PDFont font = PDType1Font.HELVETICA_BOLD;
-
-                    // Start a new content stream which will "hold" the to be
-                    // created content
-                    PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-                    // Define a text content stream using the selected font,
-                    // moving the cursor and drawing the text "Hello World"
-                    contentStream.beginText();
-                    contentStream.setFont(font, 12);
-                    contentStream.moveTextPositionByAmount(100, 700);
-                    contentStream.drawString("Hello World");
-                    contentStream.endText();
-
-                    // Make sure that the content stream is closed:
-                    contentStream.close();
-
-                    // Save the results and ensure that the document is properly
-                    // closed:
-                    document.save("Hello World.pdf");
-                    document.close();
+                	for (int i = 0; i < rownum; i++) {   
+                		Team t = teams.get(i);
+                		for (int j = 1; j < 11; j++) {                			                	
+                			String q = (String)table.getValueAt(i, j);
+                			int qq = (q != null) ? Integer.parseInt(q) : 0;
+                			t.setQScore(j - 1, qq);
+                		}
+                		int total = Integer.parseInt((String)table.getValueAt(i, 11));
+                		t.setScore(total);
+                	}
+                	Collections.sort(teams);
+                	PrintWriter pw = new PrintWriter (new BufferedWriter (new FileWriter (new File ("TeamReport.html"))));
+                	pw.println("<html><head><title>Team Report</title>");
+                	pw.println("<style>");
+                	pw.println("body {");
+                	pw.println("background-color: #0096FF;");
+                	pw.println("}");                	
+                	pw.println("th, td{");
+                	pw.println("border: 1px solid black;");
+                	pw.println("font-family:\"Consolas\";");
+                	pw.println("font-size: 24px;");
+                	pw.println("text-align: center;");
+                	pw.println("padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;");
+                	pw.println("}");
+                	pw.println("tr:nth-child(even){background-color: #CCC;}");                
+                	pw.println("tr:nth-child(odd){background-color: #FFF;}");
+                	pw.println("</style></head>");
+                	pw.println("<body><table><tr><th>Team Name</th>");
+                	for (int i = 1; i < 11; i++) {
+                		pw.println ("<th>Q" + i + "</th>");
+                	}
+                	pw.println("<th>Total</th>");
+                	pw.println("</tr>");
+                	for (int i = 0; i < 5; i++) {
+                		Team t = teams.get(i);
+                		String name = t.getCollege() + "-" + t.getNumber();
+                		int[] qScores = t.getQScores();
+                		int total = t.getScore();
+                		pw.println("<tr>");
+                		pw.println("<td>" + name + "</td>");
+                		for (int j = 0; j < qScores.length; j++) {
+                			int q = qScores[j];
+                			String s = "";
+                			if (q > 0) s += q;
+                			pw.println("<td>" + s + "</td>");
+                		}
+                		pw.println("<td>" + t.getScore() + "</td>");
+                		pw.println("</tr>");
+                	}                	
+                	pw.println("</table>");
+                	pw.println("</body></html>");
+                	pw.close();                	
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                	ex.printStackTrace();
                 }
             }
         });
@@ -539,7 +574,7 @@ class AddStudentsFrame extends JFrame
                             t.addStudent(s);
                         }
                         c.addStudent(s);
-                        c.addTeam(teams.get(team - 1));
+                        c.addTeam(teams.get(team - 1));    // FIX - Adding same team multiple times.
                     } else break;
                 }
                 // System.out.println (teams);

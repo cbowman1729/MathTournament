@@ -8,6 +8,7 @@ public class Team implements Comparable<Team>, Serializable
     ArrayList<Student> students = new ArrayList <Student> ();
     String college;
     int score;
+    int[] questions = new int[10];
     int number;
 
     /**
@@ -26,6 +27,14 @@ public class Team implements Comparable<Team>, Serializable
     public ArrayList<Student> getStudents ()
     {
         return students;
+    }
+    
+    public void setQScore (int q, int score) {
+    	this.questions[q] = score;
+    }
+    
+    public int[] getQScores () {
+    	return questions;
     }
 
     /**
