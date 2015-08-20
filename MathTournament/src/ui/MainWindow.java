@@ -25,6 +25,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableColumn;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import data.Tracker;
 import objects.College;
@@ -86,19 +93,26 @@ public class MainWindow extends JFrame
                 tracker.saveCollegesAndStudents();
             }
         });
-        verifyScores.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		VerifyScoresFrame vsf = new VerifyScoresFrame (tracker);
-        	}
+        verifyScores.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                VerifyScoresFrame vsf = new VerifyScoresFrame(tracker);
+            }
+        });
+        enterTeamScores.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                EnterTeamScores ets = new EnterTeamScores(tracker);
+            }
         });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
         this.add(saveStudents, setConstraints(0, 2));
         this.add(enterScores, setConstraints(0, 3));
-        this.add(verifyScores, setConstraints (1, 0));
+        this.add(verifyScores, setConstraints(1, 0));
         this.add(enterTeamScores, setConstraints(1, 1));
         this.add(showTopScores, setConstraints(1, 2));
-        
+
         this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.getContentPane().setBackground(new Color(0, 150, 255));
@@ -271,15 +285,15 @@ class VerifyScoresFrame extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         JPanel tablePanel = new JPanel(new FlowLayout());
-        ArrayList <Student> stud = tracker.getStudents();        
-        JTable table = new JTable (stud.size() + 1, 2);
-        int rownum = (stud.size() > 0) ? stud.size () : 5;
-        for (int i = 0; i < stud.size (); i++) {
-        	Student s = stud.get(i);
-        	String name = s.getLast() + ", " + s.getFirst();
-        	int score = s.getScore();
-        	table.setValueAt(name, i, 0);
-        	table.setValueAt(score, i, 1);
+        ArrayList<Student> stud = tracker.getStudents();
+        JTable table = new JTable(stud.size() + 1, 2);
+        int rownum = (stud.size() > 0) ? stud.size() : 5;
+        for (int i = 0; i < stud.size(); i++) {
+            Student s = stud.get(i);
+            String name = s.getLast() + ", " + s.getFirst();
+            int score = s.getScore();
+            table.setValueAt(name, i, 0);
+            table.setValueAt(score, i, 1);
         }
         table.getColumnModel().getColumn(0).setHeaderValue("Name");
         table.getColumnModel().getColumn(1).setHeaderValue("Score");
@@ -307,32 +321,115 @@ class VerifyScoresFrame extends JFrame
         tablePanel.add(scroll);
         tablePanel.setOpaque(false);
         this.add(tablePanel, BorderLayout.CENTER);
-        JButton close = new MyButton ("Close Window");
-        JPanel buttonPanel = new JPanel (new FlowLayout ());
+        JButton close = new MyButton("Close Window");
+        JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.setOpaque(false);
         buttonPanel.add(close);
         this.add(buttonPanel, BorderLayout.SOUTH);
-        close.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		dispose ();
-        	}
+        close.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                dispose();
+            }
         });
     }
 }
 
-class EnterTeamScores extends JFrame 
+class EnterTeamScores extends JFrame
 {
-	public EnterTeamScores (Tracker tracker) {
-		this.getContentPane().setBackground(new Color(0, 150, 255));
-		this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
-		this.getRootPane().setBackground(new Color(0, 150, 255));
-		this.setTitle("Add Students");
-		this.setLayout(new BorderLayout());
-		this.setLocation(500, 200);
-		this.setSize(900, 600);
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.setVisible(true);
-	}
+    public EnterTeamScores(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("Enter Team Scores");
+        this.setLayout(new BorderLayout());
+        this.setLocation(500, 200);
+        this.setSize(900, 500);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+        ArrayList teams = tracker.getTeams();
+        int rownum = (teams.size() > 0) ? teams.size() : 5;
+        JTable table = new JTable(rownum, 12);
+
+        JTextField exampleField = new JTextField();
+        exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        DefaultCellEditor dce = new DefaultCellEditor(exampleField);
+        for (int i = 0; i < 12; i++) {
+            TableColumn tc = table.getColumnModel().getColumn(i);
+            if (i == 0) {
+                tc.setHeaderValue("Team Name");
+                tc.setMaxWidth(200);
+                tc.setMinWidth(200);
+            } else if (i == 11) {
+                tc.setHeaderValue("Total");
+                tc.setMaxWidth(50);
+                tc.setMinWidth(50);
+            } else {
+                tc.setHeaderValue("Q" + i);
+                tc.setMaxWidth(40);
+                tc.setMinWidth(40);
+            }
+            tc.setCellEditor(dce);
+        }
+        int colmarg = table.getColumnModel().getColumnMargin();
+        int rowmarg = table.getRowMargin();
+        table.setRowHeight(25);
+        table.setFont(new Font("Consolas", Font.PLAIN, 16));
+        JScrollPane scroll = new JScrollPane(table) {
+            public Dimension getPreferredSize ()
+            {
+                this.getVerticalScrollBar().setPreferredSize(new Dimension(17, 0));
+                int h = (26 + rowmarg) * (rownum + 1);
+                return new Dimension(11 * colmarg + 10 * 40 + 250 + 22, (h > 400) ? 400 : h);
+            }
+        };
+        JPanel tablePanel = new JPanel(new FlowLayout());
+        scroll.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.black, 4),
+                BorderFactory.createLineBorder(new Color(180, 180, 180), 4)));
+        tablePanel.add(scroll);
+        tablePanel.setOpaque(false);
+        this.add(tablePanel, BorderLayout.CENTER);
+        JButton report = new MyButton("Create Score Report");
+        report.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                try {
+                    PDDocument document = new PDDocument();
+                    PDPage page = new PDPage();
+                    document.addPage(page);
+
+                    // Create a new font object selecting one of the PDF base
+                    // fonts
+                    PDFont font = PDType1Font.HELVETICA_BOLD;
+
+                    // Start a new content stream which will "hold" the to be
+                    // created content
+                    PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+                    // Define a text content stream using the selected font,
+                    // moving the cursor and drawing the text "Hello World"
+                    contentStream.beginText();
+                    contentStream.setFont(font, 12);
+                    contentStream.moveTextPositionByAmount(100, 700);
+                    contentStream.drawString("Hello World");
+                    contentStream.endText();
+
+                    // Make sure that the content stream is closed:
+                    contentStream.close();
+
+                    // Save the results and ensure that the document is properly
+                    // closed:
+                    document.save("Hello World.pdf");
+                    document.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(report);
+        this.add(buttonPanel, BorderLayout.SOUTH);
+    }
 }
 
 class AddStudentsFrame extends JFrame
@@ -424,7 +521,7 @@ class AddStudentsFrame extends JFrame
                 String collAbbr = abbrField.getText();
                 College c = new College(collName, collAbbr);
                 int team = 0;
-                ArrayList <Team> teams = new ArrayList <Team> ();
+                ArrayList<Team> teams = new ArrayList<Team>();
                 for (int i = 0; i < 80; i++) {
                     int id = i;
                     String first = (String) table.getValueAt(i, 0);
@@ -433,20 +530,19 @@ class AddStudentsFrame extends JFrame
                         int nextteam = Integer.parseInt((String) table.getValueAt(i, 2));
                         Student s = new Student(id, first, last, nextteam);
                         if (nextteam != team) {
-                        	team = nextteam;
-                        	Team t = new Team (collAbbr, team);
-                        	t.addStudent(s);
-                        	teams.add(t);
-                        }
-                        else {
-                        	Team t = teams.get(team - 1);
-                        	t.addStudent(s);
+                            team = nextteam;
+                            Team t = new Team(collAbbr, team);
+                            t.addStudent(s);
+                            teams.add(t);
+                        } else {
+                            Team t = teams.get(team - 1);
+                            t.addStudent(s);
                         }
                         c.addStudent(s);
-                        c.addTeam(teams.get(team -1));                        
+                        c.addTeam(teams.get(team - 1));
                     } else break;
                 }
-                //System.out.println (teams);
+                // System.out.println (teams);
                 tracker.addCollege(c);
                 tracker.printColleges();
                 dispose();

@@ -21,9 +21,15 @@ public class Tracker
     {
         return colleges;
     }
-    
-    public ArrayList<Student> getStudents () {
-    	return students;
+
+    public ArrayList<Student> getStudents ()
+    {
+        return students;
+    }
+
+    public ArrayList<Team> getTeams ()
+    {
+        return teams;
     }
 
     public void addCollege (College c)
