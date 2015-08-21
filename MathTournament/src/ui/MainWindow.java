@@ -31,12 +31,6 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableColumn;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
 import data.Tracker;
 import objects.College;
 import objects.Student;
@@ -352,7 +346,7 @@ class EnterTeamScores extends JFrame
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
         if (tracker.getTeams().size() == 0) tracker.popTeams();
-        ArrayList <Team> teams = tracker.getTeams();
+        ArrayList<Team> teams = tracker.getTeams();
         int rownum = (teams.size() > 0) ? teams.size() : 5;
         JTable table = new JTable(rownum, 12);
 
@@ -377,8 +371,8 @@ class EnterTeamScores extends JFrame
             tc.setCellEditor(dce);
         }
         for (int i = 0; i < rownum; i++) {
-        	Team t = teams.get(i);
-        	table.setValueAt(t.getCollege() + "-" + t.getNumber(), i, 0);
+            Team t = teams.get(i);
+            table.setValueAt(t.getCollege() + "-" + t.getNumber(), i, 0);
         }
         int colmarg = table.getColumnModel().getColumnMargin();
         int rowmarg = table.getRowMargin();
@@ -402,62 +396,62 @@ class EnterTeamScores extends JFrame
         report.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
-//            	ArrayList <Team> teams = tracker.getTeams();
+                // ArrayList <Team> teams = tracker.getTeams();
                 try {
-                	for (int i = 0; i < rownum; i++) {   
-                		Team t = teams.get(i);
-                		for (int j = 1; j < 11; j++) {                			                	
-                			String q = (String)table.getValueAt(i, j);
-                			int qq = (q != null) ? Integer.parseInt(q) : 0;
-                			t.setQScore(j - 1, qq);
-                		}
-                		int total = Integer.parseInt((String)table.getValueAt(i, 11));
-                		t.setScore(total);
-                	}
-                	Collections.sort(teams);
-                	PrintWriter pw = new PrintWriter (new BufferedWriter (new FileWriter (new File ("TeamReport.html"))));
-                	pw.println("<html><head><title>Team Report</title>");
-                	pw.println("<style>");
-                	pw.println("body {");
-                	pw.println("background-color: #0096FF;");
-                	pw.println("}");                	
-                	pw.println("th, td{");
-                	pw.println("border: 1px solid black;");
-                	pw.println("font-family:\"Consolas\";");
-                	pw.println("font-size: 24px;");
-                	pw.println("text-align: center;");
-                	pw.println("padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;");
-                	pw.println("}");
-                	pw.println("tr:nth-child(even){background-color: #CCC;}");                
-                	pw.println("tr:nth-child(odd){background-color: #FFF;}");
-                	pw.println("</style></head>");
-                	pw.println("<body><table><tr><th>Team Name</th>");
-                	for (int i = 1; i < 11; i++) {
-                		pw.println ("<th>Q" + i + "</th>");
-                	}
-                	pw.println("<th>Total</th>");
-                	pw.println("</tr>");
-                	for (int i = 0; i < 5; i++) {
-                		Team t = teams.get(i);
-                		String name = t.getCollege() + "-" + t.getNumber();
-                		int[] qScores = t.getQScores();
-                		int total = t.getScore();
-                		pw.println("<tr>");
-                		pw.println("<td>" + name + "</td>");
-                		for (int j = 0; j < qScores.length; j++) {
-                			int q = qScores[j];
-                			String s = "";
-                			if (q > 0) s += q;
-                			pw.println("<td>" + s + "</td>");
-                		}
-                		pw.println("<td>" + t.getScore() + "</td>");
-                		pw.println("</tr>");
-                	}                	
-                	pw.println("</table>");
-                	pw.println("</body></html>");
-                	pw.close();                	
+                    for (int i = 0; i < rownum; i++) {
+                        Team t = teams.get(i);
+                        for (int j = 1; j < 11; j++) {
+                            String q = (String) table.getValueAt(i, j);
+                            int qq = (q != null) ? Integer.parseInt(q) : 0;
+                            t.setQScore(j - 1, qq);
+                        }
+                        int total = Integer.parseInt((String) table.getValueAt(i, 11));
+                        t.setScore(total);
+                    }
+                    Collections.sort(teams);
+                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("TeamReport.html"))));
+                    pw.println("<html><head><title>Team Report</title>");
+                    pw.println("<style>");
+                    pw.println("body {");
+                    pw.println("background-color: #0096FF;");
+                    pw.println("}");
+                    pw.println("th, td{");
+                    pw.println("border: 1px solid black;");
+                    pw.println("font-family:\"Consolas\";");
+                    pw.println("font-size: 24px;");
+                    pw.println("text-align: center;");
+                    pw.println("padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;");
+                    pw.println("}");
+                    pw.println("tr:nth-child(even){background-color: #CCC;}");
+                    pw.println("tr:nth-child(odd){background-color: #FFF;}");
+                    pw.println("</style></head>");
+                    pw.println("<body><table><tr><th>Team Name</th>");
+                    for (int i = 1; i < 11; i++) {
+                        pw.println("<th>Q" + i + "</th>");
+                    }
+                    pw.println("<th>Total</th>");
+                    pw.println("</tr>");
+                    for (int i = 0; i < 5; i++) {
+                        Team t = teams.get(i);
+                        String name = t.getCollege() + "-" + t.getNumber();
+                        int[] qScores = t.getQScores();
+                        int total = t.getScore();
+                        pw.println("<tr>");
+                        pw.println("<td>" + name + "</td>");
+                        for (int j = 0; j < qScores.length; j++) {
+                            int q = qScores[j];
+                            String s = "";
+                            if (q > 0) s += q;
+                            pw.println("<td>" + s + "</td>");
+                        }
+                        pw.println("<td>" + t.getScore() + "</td>");
+                        pw.println("</tr>");
+                    }
+                    pw.println("</table>");
+                    pw.println("</body></html>");
+                    pw.close();
                 } catch (Exception ex) {
-                	ex.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
         });
@@ -556,6 +550,7 @@ class AddStudentsFrame extends JFrame
                 String collAbbr = abbrField.getText();
                 College c = new College(collName, collAbbr);
                 int team = 0;
+                ArrayList<Integer> teamnums = new ArrayList<Integer>();
                 ArrayList<Team> teams = new ArrayList<Team>();
                 for (int i = 0; i < 80; i++) {
                     int id = i;
@@ -564,6 +559,7 @@ class AddStudentsFrame extends JFrame
                         String last = (String) table.getValueAt(i, 1);
                         int nextteam = Integer.parseInt((String) table.getValueAt(i, 2));
                         Student s = new Student(id, first, last, nextteam);
+                        teamnums.add(nextteam);
                         if (nextteam != team) {
                             team = nextteam;
                             Team t = new Team(collAbbr, team);
@@ -574,10 +570,10 @@ class AddStudentsFrame extends JFrame
                             t.addStudent(s);
                         }
                         c.addStudent(s);
-                        c.addTeam(teams.get(team - 1));    // FIX - Adding same team multiple times.
                     } else break;
                 }
-                // System.out.println (teams);
+                // teamnums.stream().collect(Collectors.toSet());
+                teams.forEach(p -> c.addTeam(p));
                 tracker.addCollege(c);
                 tracker.printColleges();
                 dispose();
