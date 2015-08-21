@@ -391,6 +391,25 @@ class EnterTeamScores extends JFrame
                 BorderFactory.createLineBorder(new Color(180, 180, 180), 4)));
         tablePanel.add(scroll);
         tablePanel.setOpaque(false);
+        JButton computeTotal = new MyButton("Compute Totals");
+        computeTotal.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                for (int i = 0; i < rownum; i++) {
+                    int total = 0;
+                    for (int j = 1; j < 11; j++) {
+                        String qs = (String) table.getValueAt(i, j);
+                        int qscore = 0;
+                        if (qs != null) {
+                            qscore = Integer.parseInt(qs);
+                        }
+                        total += qscore;
+                    }
+                    table.setValueAt("" + total, i, 11);
+                }
+            }
+        });
+        tablePanel.add(computeTotal);
         this.add(tablePanel, BorderLayout.CENTER);
         JButton report = new MyButton("Create Score Report");
         report.addActionListener(new ActionListener() {
@@ -409,6 +428,7 @@ class EnterTeamScores extends JFrame
                         t.setScore(total);
                     }
                     Collections.sort(teams);
+                    Collections.reverse(teams);
                     PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(new File("TeamReport.html"))));
                     pw.println("<html><head><title>Team Report</title>");
                     pw.println("<style>");
@@ -418,7 +438,7 @@ class EnterTeamScores extends JFrame
                     pw.println("th, td{");
                     pw.println("border: 1px solid black;");
                     pw.println("font-family:\"Consolas\";");
-                    pw.println("font-size: 24px;");
+                    pw.println("font-size: 30px;");
                     pw.println("text-align: center;");
                     pw.println("padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;");
                     pw.println("}");
@@ -431,7 +451,7 @@ class EnterTeamScores extends JFrame
                     }
                     pw.println("<th>Total</th>");
                     pw.println("</tr>");
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < rownum; i++) {
                         Team t = teams.get(i);
                         String name = t.getCollege() + "-" + t.getNumber();
                         int[] qScores = t.getQScores();
