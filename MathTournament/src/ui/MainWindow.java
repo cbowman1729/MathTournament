@@ -103,6 +103,11 @@ public class MainWindow extends JFrame
                 EnterTeamScores ets = new EnterTeamScores(tracker);
             }
         });
+        showTopScores.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		TopScoresFrame tsf = new TopScoresFrame (tracker);
+        	}
+        });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
         this.add(saveStudents, setConstraints(0, 2));
@@ -481,6 +486,69 @@ class EnterTeamScores extends JFrame
     }
 }
 
+class TopScoresFrame extends JFrame 
+{
+	public TopScoresFrame (Tracker tracker)
+	{
+		this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("Add Students");
+        this.setLayout(new BorderLayout());
+        this.setLocation(500, 200);
+        this.setSize(900, 600);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+        JPanel panel = new JPanel (new GridBagLayout ());
+        panel.setBackground(Color.WHITE);
+        ArrayList <Student> students = tracker.getStudents();
+        Student.setCompareScores(true);
+        Collections.sort(students);
+        Collections.reverse(students);
+        ArrayList <JLabel[]> labels = new ArrayList <JLabel[]> ();
+        int n = (students.size() < 10) ? students.size() : 10;
+        for (int i = 0; i < n; i++) {
+        	Student s = students.get(i);
+        	String name = s.getLast() + ", " + s.getFirst();
+        	String score = "" + s.getScore();
+        	labels.add(new JLabel[]{new MyLabel (name), new MyLabel (score)});
+        }
+        for (int i = 0; i < labels.size (); i++) {
+        	JLabel[] student = labels.get(i);
+        	GridBagConstraints gbc = setConstraints (0,i);
+        	gbc.anchor = GridBagConstraints.EAST;
+        	panel.add(student[0], gbc);        	
+        	panel.add(student[1], setConstraints (1, i));
+        }
+        JScrollPane scroll = new JScrollPane (panel);
+        scroll.setOpaque(false);
+        this.add(scroll, BorderLayout.CENTER);
+	}
+	
+	public GridBagConstraints setConstraints (int x, int y)
+    {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        return gbc;
+    }
+}
+
+class MyLabel extends JLabel 
+{
+	public MyLabel (String s) {
+		super (s);		
+//		this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 2), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+		this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
+		this.setFont(new Font ("Consolas", Font.PLAIN, 30));
+	}
+	
+	public Color getBackground () {
+		return Color.WHITE;
+	}
+}
+
 class AddStudentsFrame extends JFrame
 {
     public AddStudentsFrame(Tracker tracker) {
@@ -602,7 +670,7 @@ class AddStudentsFrame extends JFrame
         buttonPanel.setOpaque(false);
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
-
+    
     public GridBagConstraints setConstraints (int x, int y)
     {
         GridBagConstraints gbc = new GridBagConstraints();
