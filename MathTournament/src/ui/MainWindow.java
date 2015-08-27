@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
@@ -29,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.TableColumn;
 
 import data.Tracker;
@@ -65,6 +67,7 @@ public class MainWindow extends JFrame
         JButton showTopScores = new MyButton("Show Top Scores");
         JButton saveStudents = new MyButton("Save Students to File");
         JButton verifyScores = new MyButton("Verify Morning Scores");
+        JButton close = new MyButton("Close Program");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
@@ -108,6 +111,39 @@ public class MainWindow extends JFrame
         		TopScoresFrame tsf = new TopScoresFrame (tracker);
         	}
         });
+        close.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		final boolean[] response = {false};
+        		JFrame check = new JFrame ();
+        		check.setLayout(new GridBagLayout ());
+        		JPanel panel = new JPanel (new GridBagLayout ());
+        		check.getRootPane().setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Are you sure you want to exit?", TitledBorder.CENTER, TitledBorder.TOP));
+        		JButton yes = new MyButton ("Yes");       
+        		JButton no = new MyButton ("No");
+        		yes.addActionListener(new ActionListener () {
+        			public void actionPerformed (ActionEvent e) {
+        				response[0] = true; 
+        				check.dispose ();
+        				dispose ();
+        			}
+        		});
+        		no.addActionListener(new ActionListener () {
+        			public void actionPerformed (ActionEvent e) {
+        				check.dispose ();
+        			}
+        		});        		
+        		GridBagConstraints gbc = setConstraints (0,0);
+        		gbc.fill = GridBagConstraints.BOTH;
+        		gbc.weightx = 1.0;        		
+        		check.add(yes, gbc);
+        		gbc.gridx = 1;
+        		check.add(no, gbc);
+        		//check.add(panel);
+        		check.setSize(225, 125);
+        		check.setLocation(new Point (400, 400));
+        		check.setVisible(true);
+        	}
+        });
         this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 1));
         this.add(saveStudents, setConstraints(0, 2));
@@ -115,6 +151,7 @@ public class MainWindow extends JFrame
         this.add(verifyScores, setConstraints(1, 0));
         this.add(enterTeamScores, setConstraints(1, 1));
         this.add(showTopScores, setConstraints(1, 2));
+        this.add(close, setConstraints(0,4));
 
         this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -151,15 +188,34 @@ public class MainWindow extends JFrame
 class MyButton extends JButton
 {
 
+	int width = 0;
+	int height = 0;
+	
     public MyButton(String name) {
         super(name);
         setFont(new Font("Consolas", Font.BOLD, 14));
         setBorder(BorderFactory.createRaisedBevelBorder());
     }
+    
+    public MyButton(String name, int w, int h) {
+    	this (name);
+    	width = w;
+    	height = h;
+    }
 
     public Dimension getPreferredSize ()
     {
-        return new Dimension(220, 30);
+    	if (width == 0 && height == 0) {
+    		return new Dimension(220, 30);
+    	} else {
+    		return new Dimension (width, height);
+    	}
+    	
+    }
+    
+    public void setWidthAndHeight (int w, int h) {
+    	width = w;
+    	height = h;
     }
 }
 
