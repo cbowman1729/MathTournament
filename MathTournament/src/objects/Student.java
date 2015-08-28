@@ -13,8 +13,8 @@ public class Student implements Comparable<Student>, Serializable
     private String last;
     private int score;
     private int team;
-    // private String college;
-    
+    private String college;
+
     private static boolean compareScores = false;
 
     /**
@@ -29,6 +29,11 @@ public class Student implements Comparable<Student>, Serializable
         this.first = first;
         this.last = last;
         this.team = team;
+    }
+
+    public Student(int id, String first, String last, int team, String college) {
+        this(id, first, last, team);
+        this.college = college;
     }
 
     /**
@@ -95,10 +100,16 @@ public class Student implements Comparable<Student>, Serializable
         this.team = team;
     }
 
-    public static void setCompareScores (boolean b) {
-    	compareScores = b;
+    public String getCollege ()
+    {
+        return college;
     }
-    
+
+    public static void setCompareScores (boolean b)
+    {
+        compareScores = b;
+    }
+
     /**
      * @return return student's college name
      * 
@@ -124,15 +135,15 @@ public class Student implements Comparable<Student>, Serializable
     @Override
     public int compareTo (Student s)
     {
-    	if (this.compareScores) {
-    		if (score > s.getScore()) return 1;
-    		else if (score < s.getScore()) return -1;
-    		else return 0;
-    	} else {
-    		int c = this.getLast().compareTo(s.getLast());
-    		if (c == 0) return this.getFirst ().compareTo(s.getFirst());
-    		else return c;
-    	}
+        if (this.compareScores) {
+            if (score > s.getScore()) return 1;
+            else if (score < s.getScore()) return -1;
+            else return 0;
+        } else {
+            int c = this.getLast().compareTo(s.getLast());
+            if (c == 0) return this.getFirst().compareTo(s.getFirst());
+            else return c;
+        }
     }
 
 }
