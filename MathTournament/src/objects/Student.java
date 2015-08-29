@@ -8,6 +8,7 @@ import java.io.Serializable;
  */
 public class Student implements Comparable<Student>, Serializable
 {
+    private static int count = 0;
     private int id;
     private String first;
     private String last;
@@ -25,7 +26,8 @@ public class Student implements Comparable<Student>, Serializable
      * @param college
      */
     public Student(int id, String first, String last, int team) {
-        this.id = id;
+        count += 1;
+        this.id = count;
         this.first = first;
         this.last = last;
         this.team = team;
@@ -34,6 +36,11 @@ public class Student implements Comparable<Student>, Serializable
     public Student(int id, String first, String last, int team, String college) {
         this(id, first, last, team);
         this.college = college;
+    }
+
+    public int getID ()
+    {
+        return id;
     }
 
     /**

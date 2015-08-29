@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import data.Tracker;
@@ -337,28 +338,39 @@ class VerifyScoresFrame extends JFrame
         this.setVisible(true);
         JPanel tablePanel = new JPanel(new FlowLayout());
         ArrayList<Student> stud = tracker.getStudents();
-        JTable table = new JTable(stud.size() + 1, 2);
+        JTable table = new JTable(stud.size() + 1, 3);
         int rownum = (stud.size() > 0) ? stud.size() : 5;
         for (int i = 0; i < stud.size(); i++) {
             Student s = stud.get(i);
+            int id = s.getID();
             String name = s.getLast() + ", " + s.getFirst();
             int score = s.getScore();
-            table.setValueAt(name, i, 0);
-            table.setValueAt(score, i, 1);
+            table.setValueAt("" + id, i, 0);
+            table.setValueAt(name, i, 1);
+            table.setValueAt(score, i, 2);
         }
-        table.getColumnModel().getColumn(0).setHeaderValue("Name");
-        table.getColumnModel().getColumn(1).setHeaderValue("Score");
-        table.getColumnModel().getColumn(0).setMinWidth(400);
-        table.getColumnModel().getColumn(0).setMaxWidth(400);
-        table.getColumnModel().getColumn(1).setMinWidth(100);
-        table.getColumnModel().getColumn(1).setMaxWidth(100);
+        DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(2).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(2).setHeaderValue("Score");
+        table.getColumnModel().getColumn(0).setMinWidth(48);
+        table.getColumnModel().getColumn(0).setMaxWidth(48);
+        table.getColumnModel().getColumn(1).setMinWidth(390);
+        table.getColumnModel().getColumn(1).setMaxWidth(390);
+        table.getColumnModel().getColumn(2).setMinWidth(50);
+        table.getColumnModel().getColumn(2).setMaxWidth(50);
         table.setRowHeight(25);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
         JTextField exampleField = new JTextField();
+        JTextField centerField = new JTextField();
         exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
         DefaultCellEditor dce = new DefaultCellEditor(exampleField);
         table.getColumnModel().getColumn(0).setCellEditor(dce);
         table.getColumnModel().getColumn(1).setCellEditor(dce);
+        table.getColumnModel().getColumn(2).setCellEditor(dce);
         int rowmargin = table.getRowMargin();
         JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
