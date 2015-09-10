@@ -12,25 +12,27 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import data.Tracker;
@@ -60,6 +62,17 @@ public class MainWindow extends JFrame
         this.setTitle("Main Tournament Window");
         this.setLayout(new GridBagLayout());
 
+        this.addWindowListener(new WindowAdapter() {
+            public void windowClosing (WindowEvent e)
+            {
+                int res = JOptionPane.showConfirmDialog(MainWindow.this, "Do you want to exit?", "Exit",
+                        JOptionPane.YES_NO_OPTION);
+                if (res == JOptionPane.YES_OPTION) {
+                    MainWindow.this.dispose();
+                }
+            }
+        });
+
         JButton addStudent = new MyButton("Add Student");
         JButton enterScores = new MyButton("Enter Morning Scores");
         JButton addColleges = new MyButton("Enter College Names");
@@ -67,7 +80,6 @@ public class MainWindow extends JFrame
         JButton showTopScores = new MyButton("Show Top Scores");
         JButton saveStudents = new MyButton("Save Students to File");
         JButton verifyScores = new MyButton("Verify Morning Scores");
-        JButton showAllStudents = new MyButton("Show All Students");
         JButton close = new MyButton("Close Program");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
@@ -107,61 +119,33 @@ public class MainWindow extends JFrame
                 EnterTeamScores ets = new EnterTeamScores(tracker);
             }
         });
-        showTopScores.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		TopScoresFrame tsf = new TopScoresFrame (tracker);
-        	}
+        showTopScores.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                TopScoresFrame tsf = new TopScoresFrame(tracker);
+            }
         });
-        showAllStudents.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		ShowAllStudentsFrame sasf = new ShowAllStudentsFrame (tracker);
-        	}
+        close.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                int res = JOptionPane.showConfirmDialog(MainWindow.this, "Do you want to exit?", "Exit",
+                        JOptionPane.YES_NO_OPTION);
+                if (res == JOptionPane.YES_OPTION) {
+                    MainWindow.this.dispose();
+                }
+            }
         });
-        close.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		final boolean[] response = {false};
-        		JFrame check = new JFrame ();
-        		check.setLayout(new GridBagLayout ());
-        		JPanel panel = new JPanel (new GridBagLayout ());
-        		check.getRootPane().setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "Are you sure you want to exit?", TitledBorder.CENTER, TitledBorder.TOP));
-        		JButton yes = new MyButton ("Yes");       
-        		JButton no = new MyButton ("No");
-        		yes.addActionListener(new ActionListener () {
-        			public void actionPerformed (ActionEvent e) {
-        				response[0] = true; 
-        				check.dispose ();
-        				dispose ();
-        			}
-        		});
-        		no.addActionListener(new ActionListener () {
-        			public void actionPerformed (ActionEvent e) {
-        				check.dispose ();
-        			}
-        		});        		
-        		GridBagConstraints gbc = setConstraints (0,0);
-        		gbc.fill = GridBagConstraints.BOTH;
-        		gbc.weightx = 1.0;        		
-        		check.add(yes, gbc);
-        		gbc.gridx = 1;
-        		check.add(no, gbc);
-        		//check.add(panel);
-        		check.setSize(225, 125);
-        		check.setLocation(new Point (400, 400));
-        		check.setVisible(true);
-        	}
-        });
-//        this.add(addColleges, setConstraints(0, 0));
-        this.add(addStudent, setConstraints(0, 0));
-//        this.add(saveStudents, setConstraints(0, 1));
-        this.add(showAllStudents, setConstraints (0,1));
-        this.add(enterScores, setConstraints(0, 2));
+        this.add(addColleges, setConstraints(0, 0));
+        this.add(addStudent, setConstraints(0, 1));
+        this.add(saveStudents, setConstraints(0, 2));
+        this.add(enterScores, setConstraints(0, 3));
         this.add(verifyScores, setConstraints(1, 0));
         this.add(enterTeamScores, setConstraints(1, 1));
         this.add(showTopScores, setConstraints(1, 2));
-        this.add(close, setConstraints(0,3));
+        this.add(close, setConstraints(0, 4));
 
         this.setSize(WIDTH, HEIGHT);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.getContentPane().setBackground(new Color(0, 150, 255));
         this.setVisible(true);
         this.setLocation(getWindowPoint());
@@ -195,79 +179,36 @@ public class MainWindow extends JFrame
 class MyButton extends JButton
 {
 
-	int width = 0;
-	int height = 0;
-	
+    int width = 0;
+    int height = 0;
+
     public MyButton(String name) {
         super(name);
         setFont(new Font("Consolas", Font.BOLD, 14));
         setBorder(BorderFactory.createRaisedBevelBorder());
     }
-    
+
     public MyButton(String name, int w, int h) {
-    	this (name);
-    	width = w;
-    	height = h;
+        this(name);
+        width = w;
+        height = h;
     }
 
     public Dimension getPreferredSize ()
     {
-    	if (width == 0 && height == 0) {
-    		return new Dimension(220, 30);
-    	} else {
-    		return new Dimension (width, height);
-    	}
-    	
-    }
-    
-    public void setWidthAndHeight (int w, int h) {
-    	width = w;
-    	height = h;
-    }
-}
-
-class ShowAllStudentsFrame extends JFrame 
-{
-	public ShowAllStudentsFrame (Tracker tracker) {
-		this.getContentPane().setBackground(new Color(0, 150, 255));
-        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
-        this.getRootPane().setBackground(new Color(0, 150, 255));
-        this.setTitle("List of Students in Tournament");
-        ArrayList <Student> students = tracker.getStudents();
-        int numStudents = students.size();
-        JTable table = new JTable (numStudents, 4);
-        JScrollPane scroll = new JScrollPane (table);
-        table.setRowHeight(25);
-        table.getColumnModel().getColumn(0).setHeaderValue("ID");
-        table.getColumnModel().getColumn(1).setHeaderValue("Name");
-        table.getColumnModel().getColumn(2).setHeaderValue("College");
-        table.getColumnModel().getColumn(3).setHeaderValue("Team");
-        table.getColumnModel().getColumn(0).setMinWidth(20);
-        table.getColumnModel().getColumn(0).setMaxWidth(20);
-        table.getColumnModel().getColumn(1).setMinWidth(200);
-        table.getColumnModel().getColumn(1).setMaxWidth(200);
-        table.getColumnModel().getColumn(2).setMinWidth(100);
-        table.getColumnModel().getColumn(2).setMaxWidth(100);
-        table.getColumnModel().getColumn(3).setMinWidth(20);
-        table.getColumnModel().getColumn(3).setMaxWidth(20);
-        table.setFont(new Font("Consolas", Font.PLAIN, 16));
-        JTextField exampleField = new JTextField();
-        exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
-        DefaultCellEditor dce = new DefaultCellEditor(exampleField);
-        table.getColumnModel().getColumn(0).setCellEditor(dce);
-        table.getColumnModel().getColumn(1).setCellEditor(dce);
-        table.getColumnModel().getColumn(2).setCellEditor(dce);
-        table.getColumnModel().getColumn(3).setCellEditor(dce);
-        int rowmargin = table.getRowMargin();
-        for (int i = 0; i < numStudents; i++) {
-        	Student s = students.get(i);
+        if (width == 0 && height == 0) {
+            return new Dimension(220, 30);
+        } else {
+            return new Dimension(width, height);
         }
-        this.setLayout(new BorderLayout());
-        this.setLocation(500, 200);
-        this.setSize(900, 600);
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.setVisible(true);
-	}
+
+    }
+
+    public void setWidthAndHeight (int w, int h)
+    {
+        width = w;
+        height = h;
+    }
 }
 
 class AddCollegesFrame extends JFrame
@@ -325,6 +266,7 @@ class EnterScoresFrame extends JFrame
         for (College c : coll) {
             stud.addAll(c.getStudents());
         }
+        Collections.sort(stud);
         JPanel scrollPanel = new JPanel(new FlowLayout());
         int rownum = (stud.size() > 0) ? stud.size() : 5;
         JTable table = new JTable(rownum, 2);
@@ -396,28 +338,39 @@ class VerifyScoresFrame extends JFrame
         this.setVisible(true);
         JPanel tablePanel = new JPanel(new FlowLayout());
         ArrayList<Student> stud = tracker.getStudents();
-        JTable table = new JTable(stud.size() + 1, 2);
+        JTable table = new JTable(stud.size() + 1, 3);
         int rownum = (stud.size() > 0) ? stud.size() : 5;
         for (int i = 0; i < stud.size(); i++) {
             Student s = stud.get(i);
+            int id = s.getID();
             String name = s.getLast() + ", " + s.getFirst();
             int score = s.getScore();
-            table.setValueAt(name, i, 0);
-            table.setValueAt(score, i, 1);
+            table.setValueAt("" + id, i, 0);
+            table.setValueAt(name, i, 1);
+            table.setValueAt(score, i, 2);
         }
-        table.getColumnModel().getColumn(0).setHeaderValue("Name");
-        table.getColumnModel().getColumn(1).setHeaderValue("Score");
-        table.getColumnModel().getColumn(0).setMinWidth(400);
-        table.getColumnModel().getColumn(0).setMaxWidth(400);
-        table.getColumnModel().getColumn(1).setMinWidth(100);
-        table.getColumnModel().getColumn(1).setMaxWidth(100);
+        DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(2).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(2).setHeaderValue("Score");
+        table.getColumnModel().getColumn(0).setMinWidth(48);
+        table.getColumnModel().getColumn(0).setMaxWidth(48);
+        table.getColumnModel().getColumn(1).setMinWidth(390);
+        table.getColumnModel().getColumn(1).setMaxWidth(390);
+        table.getColumnModel().getColumn(2).setMinWidth(50);
+        table.getColumnModel().getColumn(2).setMaxWidth(50);
         table.setRowHeight(25);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
         JTextField exampleField = new JTextField();
+        JTextField centerField = new JTextField();
         exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
         DefaultCellEditor dce = new DefaultCellEditor(exampleField);
         table.getColumnModel().getColumn(0).setCellEditor(dce);
         table.getColumnModel().getColumn(1).setCellEditor(dce);
+        table.getColumnModel().getColumn(2).setCellEditor(dce);
         int rowmargin = table.getRowMargin();
         JScrollPane scroll = new JScrollPane(table) {
             public Dimension getPreferredSize ()
@@ -593,11 +546,10 @@ class EnterTeamScores extends JFrame
     }
 }
 
-class TopScoresFrame extends JFrame 
+class TopScoresFrame extends JFrame
 {
-	public TopScoresFrame (Tracker tracker)
-	{
-		this.getContentPane().setBackground(new Color(0, 150, 255));
+    public TopScoresFrame(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
         this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
         this.getRootPane().setBackground(new Color(0, 150, 255));
         this.setTitle("Add Students");
@@ -606,33 +558,47 @@ class TopScoresFrame extends JFrame
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
-        JPanel panel = new JPanel (new GridBagLayout ());
+        JPanel panel = new JPanel(new GridBagLayout());
         panel.setBackground(Color.WHITE);
-        ArrayList <Student> students = tracker.getStudents();
+        ArrayList<Student> students = tracker.getStudents();
         Student.setCompareScores(true);
         Collections.sort(students);
         Collections.reverse(students);
-        ArrayList <JLabel[]> labels = new ArrayList <JLabel[]> ();
+        ArrayList<JLabel[]> labels = new ArrayList<JLabel[]>();
         int n = (students.size() < 10) ? students.size() : 10;
+        int count = 0;
+        int lastscore = -1;
         for (int i = 0; i < n; i++) {
-        	Student s = students.get(i);
-        	String name = s.getLast() + ", " + s.getFirst();
-        	String score = "" + s.getScore();
-        	labels.add(new JLabel[]{new MyLabel (name), new MyLabel (score)});
+            Student s = students.get(i);
+            String name = s.getFirst() + " " + s.getLast();
+            String coll = s.getCollege();
+            int scor = s.getScore();
+            if (scor != lastscore) {
+                lastscore = scor;
+                count++;
+            }
+            String score = "" + scor;
+            labels.add(new JLabel[] { new MyLabel("" + count), new MyLabel(coll + " - " + name), new MyLabel(score) });
         }
-        for (int i = 0; i < labels.size (); i++) {
-        	JLabel[] student = labels.get(i);
-        	GridBagConstraints gbc = setConstraints (0,i);
-        	gbc.anchor = GridBagConstraints.EAST;
-        	panel.add(student[0], gbc);        	
-        	panel.add(student[1], setConstraints (1, i));
+        for (int i = 0; i < labels.size(); i++) {
+            JLabel[] student = labels.get(i);
+            GridBagConstraints gbc = setConstraints(0, i);
+            // gbc.anchor = GridBagConstraints.EAST;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(0, 0, 15, 30);
+            panel.add(student[0], gbc);
+            gbc.gridx = 1;
+            panel.add(student[1], gbc);
+            gbc.gridx = 2;
+            panel.add(student[2], gbc);
         }
-        JScrollPane scroll = new JScrollPane (panel);
-        scroll.setOpaque(false);
-        this.add(scroll, BorderLayout.CENTER);
-	}
-	
-	public GridBagConstraints setConstraints (int x, int y)
+        // JScrollPane scroll = new JScrollPane(panel);
+        // scroll.setOpaque(false);
+        panel.setOpaque(false);
+        this.add(panel, BorderLayout.CENTER);
+    }
+
+    public GridBagConstraints setConstraints (int x, int y)
     {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
@@ -642,18 +608,22 @@ class TopScoresFrame extends JFrame
     }
 }
 
-class MyLabel extends JLabel 
+class MyLabel extends JLabel
 {
-	public MyLabel (String s) {
-		super (s);		
-//		this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 2), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
-		this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
-		this.setFont(new Font ("Consolas", Font.PLAIN, 30));
-	}
-	
-	public Color getBackground () {
-		return Color.WHITE;
-	}
+    public MyLabel(String s) {
+        super(s);
+        // this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK,
+        // 2), BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+        // this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0,
+        // Color.BLACK));
+        this.setFont(new Font("Consolas", Font.PLAIN, 28));
+        this.setHorizontalAlignment(JLabel.RIGHT);
+        this.setForeground(Color.BLACK);
+        this.setBackground(Color.WHITE);
+        this.setOpaque(true);
+        this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK, 2),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)));
+    }
 }
 
 class AddStudentsFrame extends JFrame
@@ -753,7 +723,7 @@ class AddStudentsFrame extends JFrame
                     if (first != null) {
                         String last = (String) table.getValueAt(i, 1);
                         int nextteam = Integer.parseInt((String) table.getValueAt(i, 2));
-                        Student s = new Student(id, first, last, nextteam);
+                        Student s = new Student(id, first, last, nextteam, collAbbr);
                         teamnums.add(nextteam);
                         if (nextteam != team) {
                             team = nextteam;
@@ -777,7 +747,7 @@ class AddStudentsFrame extends JFrame
         buttonPanel.setOpaque(false);
         this.add(buttonPanel, BorderLayout.SOUTH);
     }
-    
+
     public GridBagConstraints setConstraints (int x, int y)
     {
         GridBagConstraints gbc = new GridBagConstraints();
