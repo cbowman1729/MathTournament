@@ -67,6 +67,7 @@ public class MainWindow extends JFrame
         JButton showTopScores = new MyButton("Show Top Scores");
         JButton saveStudents = new MyButton("Save Students to File");
         JButton verifyScores = new MyButton("Verify Morning Scores");
+        JButton showAllStudents = new MyButton("Show All Students");
         JButton close = new MyButton("Close Program");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
@@ -111,6 +112,11 @@ public class MainWindow extends JFrame
         		TopScoresFrame tsf = new TopScoresFrame (tracker);
         	}
         });
+        showAllStudents.addActionListener(new ActionListener () {
+        	public void actionPerformed (ActionEvent e) {
+        		ShowAllStudentsFrame sasf = new ShowAllStudentsFrame (tracker);
+        	}
+        });
         close.addActionListener(new ActionListener () {
         	public void actionPerformed (ActionEvent e) {
         		final boolean[] response = {false};
@@ -144,14 +150,15 @@ public class MainWindow extends JFrame
         		check.setVisible(true);
         	}
         });
-        this.add(addColleges, setConstraints(0, 0));
-        this.add(addStudent, setConstraints(0, 1));
-        this.add(saveStudents, setConstraints(0, 2));
-        this.add(enterScores, setConstraints(0, 3));
+//        this.add(addColleges, setConstraints(0, 0));
+        this.add(addStudent, setConstraints(0, 0));
+//        this.add(saveStudents, setConstraints(0, 1));
+        this.add(showAllStudents, setConstraints (0,1));
+        this.add(enterScores, setConstraints(0, 2));
         this.add(verifyScores, setConstraints(1, 0));
         this.add(enterTeamScores, setConstraints(1, 1));
         this.add(showTopScores, setConstraints(1, 2));
-        this.add(close, setConstraints(0,4));
+        this.add(close, setConstraints(0,3));
 
         this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -217,6 +224,50 @@ class MyButton extends JButton
     	width = w;
     	height = h;
     }
+}
+
+class ShowAllStudentsFrame extends JFrame 
+{
+	public ShowAllStudentsFrame (Tracker tracker) {
+		this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("List of Students in Tournament");
+        ArrayList <Student> students = tracker.getStudents();
+        int numStudents = students.size();
+        JTable table = new JTable (numStudents, 4);
+        JScrollPane scroll = new JScrollPane (table);
+        table.setRowHeight(25);
+        table.getColumnModel().getColumn(0).setHeaderValue("ID");
+        table.getColumnModel().getColumn(1).setHeaderValue("Name");
+        table.getColumnModel().getColumn(2).setHeaderValue("College");
+        table.getColumnModel().getColumn(3).setHeaderValue("Team");
+        table.getColumnModel().getColumn(0).setMinWidth(20);
+        table.getColumnModel().getColumn(0).setMaxWidth(20);
+        table.getColumnModel().getColumn(1).setMinWidth(200);
+        table.getColumnModel().getColumn(1).setMaxWidth(200);
+        table.getColumnModel().getColumn(2).setMinWidth(100);
+        table.getColumnModel().getColumn(2).setMaxWidth(100);
+        table.getColumnModel().getColumn(3).setMinWidth(20);
+        table.getColumnModel().getColumn(3).setMaxWidth(20);
+        table.setFont(new Font("Consolas", Font.PLAIN, 16));
+        JTextField exampleField = new JTextField();
+        exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
+        DefaultCellEditor dce = new DefaultCellEditor(exampleField);
+        table.getColumnModel().getColumn(0).setCellEditor(dce);
+        table.getColumnModel().getColumn(1).setCellEditor(dce);
+        table.getColumnModel().getColumn(2).setCellEditor(dce);
+        table.getColumnModel().getColumn(3).setCellEditor(dce);
+        int rowmargin = table.getRowMargin();
+        for (int i = 0; i < numStudents; i++) {
+        	Student s = students.get(i);
+        }
+        this.setLayout(new BorderLayout());
+        this.setLocation(500, 200);
+        this.setSize(900, 600);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+	}
 }
 
 class AddCollegesFrame extends JFrame
