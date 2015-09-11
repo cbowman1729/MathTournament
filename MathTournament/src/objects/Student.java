@@ -92,6 +92,11 @@ public class Student implements Comparable<Student>, Serializable
         this.score = score;
     }
 
+    public void setCollege (String college)
+    {
+        this.college = college;
+    }
+
     /**
      * @return return the student's team number
      */
@@ -118,10 +123,11 @@ public class Student implements Comparable<Student>, Serializable
         compareScores = b;
         compareIDs = !b;
     }
-    
-    public static void setCompareIDs (boolean b) {
-    	compareIDs = b;
-    	compareScores = !b;
+
+    public static void setCompareIDs (boolean b)
+    {
+        compareIDs = b;
+        compareScores = !b;
     }
 
     /**
@@ -154,9 +160,9 @@ public class Student implements Comparable<Student>, Serializable
             else if (score < s.getScore()) return -1;
             else return 0;
         } else if (this.compareIDs) {
-        	if (id > s.getID ()) return 1;
-        	else if (id < s.getID()) return -1;
-        	else return 0;
+            if (id > s.getID()) return 1;
+            else if (id < s.getID()) return -1;
+            else return 0;
         } else {
             int c = this.getLast().compareTo(s.getLast());
             if (c == 0) return this.getFirst().compareTo(s.getFirst());

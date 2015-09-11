@@ -81,6 +81,7 @@ public class MainWindow extends JFrame
         JButton showAllStudents = new MyButton("Show All Students");
         JButton saveStudents = new MyButton("Save Students to File");
         JButton verifyScores = new MyButton("Verify Morning Scores");
+        JButton changeInfo = new MyButton("Change Student Info");
         JButton close = new MyButton("Close Program");
         addStudent.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
@@ -126,10 +127,17 @@ public class MainWindow extends JFrame
                 TopScoresFrame tsf = new TopScoresFrame(tracker);
             }
         });
-        showAllStudents.addActionListener(new ActionListener () {
-        	public void actionPerformed (ActionEvent e) {
-        		ShowAllStudentsFrame sasf = new ShowAllStudentsFrame (tracker);
-        	}
+        showAllStudents.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                ShowAllStudentsFrame sasf = new ShowAllStudentsFrame(tracker);
+            }
+        });
+        changeInfo.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                ChangeInfoFrame cif = new ChangeInfoFrame(tracker);
+            }
         });
         close.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
@@ -141,15 +149,16 @@ public class MainWindow extends JFrame
                 }
             }
         });
-//        this.add(addColleges, setConstraints(0, 0));
+        // this.add(addColleges, setConstraints(0, 0));
         this.add(addStudent, setConstraints(0, 0));
-//        this.add(saveStudents, setConstraints(0, 2));
+        // this.add(saveStudents, setConstraints(0, 2));
         this.add(showAllStudents, setConstraints(0, 1));
         this.add(enterScores, setConstraints(0, 2));
+        this.add(changeInfo, setConstraints(0, 3));
         this.add(verifyScores, setConstraints(1, 0));
         this.add(enterTeamScores, setConstraints(1, 1));
         this.add(showTopScores, setConstraints(1, 2));
-        this.add(close, setConstraints(0, 3));
+        this.add(close, setConstraints(0, 4));
 
         this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -218,37 +227,171 @@ class MyButton extends JButton
     }
 }
 
-class ShowAllStudentsFrame extends JFrame 
+class ChangeInfoFrame extends JFrame
 {
-	public ShowAllStudentsFrame (Tracker tracker) {
-		this.getContentPane().setBackground(new Color(0, 150, 255));
+    public ChangeInfoFrame(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
+        this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+        this.getRootPane().setBackground(new Color(0, 150, 255));
+        this.setTitle("Change a Student's Information");
+        ArrayList<College> colleges = tracker.getColleges();
+        ArrayList<Student> students = new ArrayList<Student>();
+        for (College c : colleges) {
+            students.addAll(c.getStudents());
+        }
+        Student.setCompareIDs(true);
+        Collections.sort(students);
+        JLabel label = new JLabel("Enter a student ID");
+        JTextField idField = new JTextField(20);
+        JButton submitID = new MyButton("Submit");
+        JPanel idPanel = new JPanel(new GridBagLayout());
+        idPanel.add(label, setConstraints(0, 0));
+        idPanel.add(idField, setConstraints(1, 0));
+        idPanel.add(submitID, setConstraints(2, 0));
+        submitID.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                int id = Integer.parseInt(idField.getText());
+                for (int i = 0; i < students.size(); i++) {
+                    Student s = students.get(i);
+                    if (id == s.getID()) {
+                        JFrame infoFrame = new JFrame(s.getFirst() + " " + s.getLast());
+                        infoFrame.setSize(600, 400);
+                        infoFrame.setLocation(500, 200);
+                        infoFrame.getContentPane().setLayout(new BorderLayout());
+                        infoFrame.getContentPane().setBackground(new Color(0, 150, 255));
+                        infoFrame.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
+                        infoFrame.getRootPane().setBackground(new Color(0, 150, 255));
+                        JLabel directions = new JLabel("Enter any new information and click submit");
+                        JLabel firstLabel = new JLabel("First Name");
+                        JLabel lastLabel = new JLabel("Last Name");
+                        JLabel collLabel = new JLabel("College name");
+                        JLabel collAbbr = new JLabel("College Abbreviation");
+                        JLabel teamLabel = new JLabel("Team Number");
+                        JTextField firstField = new JTextField() {
+                            public int getWidth ()
+                            {
+                                return 150;
+                            }
+                        };
+                        JTextField lastField = new JTextField() {
+                            public int getWidth ()
+                            {
+                                return 150;
+                            }
+                        };
+                        JTextField collField = new JTextField() {
+                            public int getWidth ()
+                            {
+                                return 150;
+                            }
+                        };
+                        JTextField collAField = new JTextField() {
+                            public int getWidth ()
+                            {
+                                return 150;
+                            }
+                        };
+                        JTextField teamField = new JTextField() {
+                            public int getWidth ()
+                            {
+                                return 150;
+                            }
+                        };
+                        JButton submitInfo = new MyButton("Submit");
+                        submitInfo.addActionListener(new ActionListener() {
+                            public void actionPerformed (ActionEvent e)
+                            {
+                                String first = firstField.getText();
+                                String last = lastField.getText();
+                                String coll = collField.getText();
+                                String collAbbr = collAField.getText();
+                                String teamNum = teamField.getText();
+                                if (first.length() > 0) s.setFirst(first);
+                                if (last.length() > 0) s.setLast(last);
+                                if (coll.length() > 0) s.setCollege(coll);
+                                if (teamNum.length() > 0) s.setTeam(Integer.parseInt(teamNum));
+                                infoFrame.dispose();
+                            }
+                        });
+                        JPanel panel = new JPanel(new GridBagLayout());
+                        GridBagConstraints gbc = setConstraints(0, 0);
+                        gbc.gridwidth = 3;
+                        panel.add(directions, gbc);
+                        panel.add(firstLabel, setConstraints(0, 1));
+                        panel.add(lastLabel, setConstraints(0, 2));
+                        panel.add(collLabel, setConstraints(0, 3));
+                        panel.add(teamLabel, setConstraints(0, 4));
+                        panel.add(firstField, setConstraints(1, 1));
+                        panel.add(lastField, setConstraints(1, 2));
+                        panel.add(collField, setConstraints(1, 3));
+                        panel.add(teamField, setConstraints(1, 4));
+                        gbc.gridx = 0;
+                        gbc.gridy = 5;
+                        panel.add(submitInfo, gbc);
+                        infoFrame.add(panel, BorderLayout.CENTER);
+                        infoFrame.setVisible(true);
+                    }
+                    break;
+                }
+            }
+        });
+        this.setLayout(new BorderLayout());
+        this.add(idPanel, BorderLayout.CENTER);
+        this.setLocation(500, 200);
+        this.setSize(900, 600);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setVisible(true);
+    }
+
+    public GridBagConstraints setConstraints (int x, int y)
+    {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        return gbc;
+    }
+}
+
+class ShowAllStudentsFrame extends JFrame
+{
+    public ShowAllStudentsFrame(Tracker tracker) {
+        this.getContentPane().setBackground(new Color(0, 150, 255));
         this.getRootPane().setBorder(new EmptyBorder(20, 20, 20, 20));
         this.getRootPane().setBackground(new Color(0, 150, 255));
         this.setTitle("List of Students in Tournament");
-        
-        ArrayList <College> colleges = tracker.getColleges();
-        ArrayList <Student> students = new ArrayList <Student> ();
+
+        ArrayList<College> colleges = tracker.getColleges();
+        ArrayList<Student> students = new ArrayList<Student>();
         for (College c : colleges) {
-        	students.addAll(c.getStudents());
+            students.addAll(c.getStudents());
         }
         Student.setCompareIDs(true);
         Collections.sort(students);
         int numStudents = students.size();
-        JPanel panel = new JPanel (new FlowLayout ());
-        JTable table = new JTable (numStudents, 4);        
+        JPanel panel = new JPanel(new FlowLayout());
+        int rownum = numStudents < 5 ? 5 : numStudents;
+        JTable table = new JTable(numStudents, 4);
+        DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
+        dtcr.setHorizontalAlignment(JLabel.CENTER);
         table.setRowHeight(25);
+        table.getColumnModel().getColumn(0).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(1).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(2).setCellRenderer(dtcr);
+        table.getColumnModel().getColumn(3).setCellRenderer(dtcr);
         table.getColumnModel().getColumn(0).setHeaderValue("ID");
         table.getColumnModel().getColumn(1).setHeaderValue("Name");
         table.getColumnModel().getColumn(2).setHeaderValue("College");
         table.getColumnModel().getColumn(3).setHeaderValue("Team");
-        table.getColumnModel().getColumn(0).setMinWidth(20);
-        table.getColumnModel().getColumn(0).setMaxWidth(20);
+        table.getColumnModel().getColumn(0).setMinWidth(30);
+        table.getColumnModel().getColumn(0).setMaxWidth(30);
         table.getColumnModel().getColumn(1).setMinWidth(200);
         table.getColumnModel().getColumn(1).setMaxWidth(200);
         table.getColumnModel().getColumn(2).setMinWidth(100);
         table.getColumnModel().getColumn(2).setMaxWidth(100);
-        table.getColumnModel().getColumn(3).setMinWidth(20);
-        table.getColumnModel().getColumn(3).setMaxWidth(20);
+        table.getColumnModel().getColumn(3).setMinWidth(50);
+        table.getColumnModel().getColumn(3).setMaxWidth(50);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
         JTextField exampleField = new JTextField();
         exampleField.setFont(new Font("Consolas", Font.PLAIN, 16));
@@ -259,25 +402,32 @@ class ShowAllStudentsFrame extends JFrame
         table.getColumnModel().getColumn(3).setCellEditor(dce);
         int rowmargin = table.getRowMargin();
         for (int i = 0; i < numStudents; i++) {
-        	Student s = students.get(i);
-        	Integer id = s.getID();
-        	String name = s.getFirst() + " " + s.getLast();
-        	String coll = s.getCollege();
-        	Integer team = s.getTeam();
-        	table.setValueAt(id, i, 0);
-        	table.setValueAt(name, i, 1);
-        	table.setValueAt(coll, i, 2);
-        	table.setValueAt(team, i, 3);
+            Student s = students.get(i);
+            Integer id = s.getID();
+            String name = s.getFirst() + " " + s.getLast();
+            String coll = s.getCollege();
+            Integer team = s.getTeam();
+            table.setValueAt(id, i, 0);
+            table.setValueAt(name, i, 1);
+            table.setValueAt(coll, i, 2);
+            table.setValueAt(team, i, 3);
         }
-        JScrollPane scroll = new JScrollPane (table);
+        JScrollPane scroll = new JScrollPane(table) {
+            public Dimension getPreferredSize ()
+            {
+                int h = (25 + rowmargin) * (rownum + 1);
+                return new Dimension(450, (h > 400) ? 400 : h);
+            }
+        };
         panel.add(scroll);
-        this.add(panel, BorderLayout.CENTER);
+        panel.setOpaque(false);
         this.setLayout(new BorderLayout());
+        this.add(panel, BorderLayout.CENTER);
         this.setLocation(500, 200);
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
-	}
+    }
 }
 
 class AddCollegesFrame extends JFrame
