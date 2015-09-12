@@ -244,10 +244,20 @@ class ChangeInfoFrame extends JFrame
         JLabel label = new JLabel("Enter a student ID");
         JTextField idField = new JTextField(20);
         JButton submitID = new MyButton("Submit");
+        JButton close = new MyButton("Close");
+        close.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                dispose();
+            }
+        });
         JPanel idPanel = new JPanel(new GridBagLayout());
         idPanel.add(label, setConstraints(0, 0));
         idPanel.add(idField, setConstraints(1, 0));
         idPanel.add(submitID, setConstraints(2, 0));
+        GridBagConstraints gbc = setConstraints(0, 1);
+        gbc.gridwidth = 3;
+        idPanel.add(close, gbc);
         submitID.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e)
             {
@@ -268,34 +278,34 @@ class ChangeInfoFrame extends JFrame
                         JLabel collLabel = new JLabel("College name");
                         JLabel collAbbr = new JLabel("College Abbreviation");
                         JLabel teamLabel = new JLabel("Team Number");
-                        JTextField firstField = new JTextField() {
-                            public int getWidth ()
+                        JTextField firstField = new JTextField(150) {
+                            public Dimension getPreferredSize ()
                             {
-                                return 150;
+                                return new Dimension(150, 20);
                             }
                         };
-                        JTextField lastField = new JTextField() {
-                            public int getWidth ()
+                        JTextField lastField = new JTextField(150) {
+                            public Dimension getPreferredSize ()
                             {
-                                return 150;
+                                return new Dimension(150, 20);
                             }
                         };
-                        JTextField collField = new JTextField() {
-                            public int getWidth ()
+                        JTextField collField = new JTextField(150) {
+                            public Dimension getPreferredSize ()
                             {
-                                return 150;
+                                return new Dimension(150, 20);
                             }
                         };
-                        JTextField collAField = new JTextField() {
-                            public int getWidth ()
+                        JTextField collAField = new JTextField(150) {
+                            public Dimension getPreferredSize ()
                             {
-                                return 150;
+                                return new Dimension(150, 20);
                             }
                         };
-                        JTextField teamField = new JTextField() {
-                            public int getWidth ()
+                        JTextField teamField = new JTextField(150) {
+                            public Dimension getPreferredSize ()
                             {
-                                return 150;
+                                return new Dimension(150, 20);
                             }
                         };
                         JButton submitInfo = new MyButton("Submit");
@@ -322,14 +332,15 @@ class ChangeInfoFrame extends JFrame
                         panel.add(lastLabel, setConstraints(0, 2));
                         panel.add(collLabel, setConstraints(0, 3));
                         panel.add(teamLabel, setConstraints(0, 4));
-                        panel.add(firstField, setConstraints(1, 1));
-                        panel.add(lastField, setConstraints(1, 2));
-                        panel.add(collField, setConstraints(1, 3));
-                        panel.add(teamField, setConstraints(1, 4));
+                        panel.add(firstField, setConstraints(1, 1, GridBagConstraints.HORIZONTAL));
+                        panel.add(lastField, setConstraints(1, 2, GridBagConstraints.HORIZONTAL));
+                        panel.add(collField, setConstraints(1, 3, GridBagConstraints.HORIZONTAL));
+                        panel.add(teamField, setConstraints(1, 4, GridBagConstraints.HORIZONTAL));
                         gbc.gridx = 0;
                         gbc.gridy = 5;
                         panel.add(submitInfo, gbc);
                         infoFrame.add(panel, BorderLayout.CENTER);
+                        infoFrame.pack();
                         infoFrame.setVisible(true);
                     }
                     break;
@@ -337,6 +348,7 @@ class ChangeInfoFrame extends JFrame
             }
         });
         this.setLayout(new BorderLayout());
+        this.pack();
         this.add(idPanel, BorderLayout.CENTER);
         this.setLocation(500, 200);
         this.setSize(900, 600);
@@ -349,6 +361,16 @@ class ChangeInfoFrame extends JFrame
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
         gbc.gridy = y;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        return gbc;
+    }
+
+    public GridBagConstraints setConstraints (int x, int y, int f)
+    {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.fill = f;
         gbc.insets = new Insets(20, 20, 20, 20);
         return gbc;
     }
@@ -370,7 +392,7 @@ class ShowAllStudentsFrame extends JFrame
         Student.setCompareIDs(true);
         Collections.sort(students);
         int numStudents = students.size();
-        JPanel panel = new JPanel(new FlowLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
         int rownum = numStudents < 5 ? 5 : numStudents;
         JTable table = new JTable(numStudents, 4);
         DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
@@ -384,12 +406,12 @@ class ShowAllStudentsFrame extends JFrame
         table.getColumnModel().getColumn(1).setHeaderValue("Name");
         table.getColumnModel().getColumn(2).setHeaderValue("College");
         table.getColumnModel().getColumn(3).setHeaderValue("Team");
-        table.getColumnModel().getColumn(0).setMinWidth(30);
-        table.getColumnModel().getColumn(0).setMaxWidth(30);
-        table.getColumnModel().getColumn(1).setMinWidth(200);
-        table.getColumnModel().getColumn(1).setMaxWidth(200);
-        table.getColumnModel().getColumn(2).setMinWidth(100);
-        table.getColumnModel().getColumn(2).setMaxWidth(100);
+        table.getColumnModel().getColumn(0).setMinWidth(50);
+        table.getColumnModel().getColumn(0).setMaxWidth(50);
+        table.getColumnModel().getColumn(1).setMinWidth(230);
+        table.getColumnModel().getColumn(1).setMaxWidth(230);
+        table.getColumnModel().getColumn(2).setMinWidth(120);
+        table.getColumnModel().getColumn(2).setMaxWidth(120);
         table.getColumnModel().getColumn(3).setMinWidth(50);
         table.getColumnModel().getColumn(3).setMaxWidth(50);
         table.setFont(new Font("Consolas", Font.PLAIN, 16));
@@ -419,14 +441,31 @@ class ShowAllStudentsFrame extends JFrame
                 return new Dimension(450, (h > 400) ? 400 : h);
             }
         };
-        panel.add(scroll);
+        panel.add(scroll, setConstraints(0, 0));
         panel.setOpaque(false);
+        JButton close = new MyButton("Close");
+        close.addActionListener(new ActionListener() {
+            public void actionPerformed (ActionEvent e)
+            {
+                dispose();
+            }
+        });
+        panel.add(close, setConstraints(0, 1));
         this.setLayout(new BorderLayout());
         this.add(panel, BorderLayout.CENTER);
         this.setLocation(500, 200);
         this.setSize(900, 600);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
+    }
+
+    public GridBagConstraints setConstraints (int x, int y)
+    {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = x;
+        gbc.gridy = y;
+        gbc.insets = new Insets(20, 20, 20, 20);
+        return gbc;
     }
 }
 
